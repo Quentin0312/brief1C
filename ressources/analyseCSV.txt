@@ -38,5 +38,9 @@ InvoiceNo -----
     pas d'autre valeur étrange trouvé
 
 Quantity -----
-    doit toujours être un entier
+    doit toujours être un entier => validé
+    valeur négative => avoir => vérifier combinaisons avec d'autre champs !! -----
+    valeur positive => facture classique
+    valeur "0" => existe pas À vérifier pour le ETL final
+    valeur manquante ?=>
 

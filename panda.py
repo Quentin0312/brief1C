@@ -1,7 +1,11 @@
 # Pandas W3schools
 # https://www.w3schools.com/python/pandas/pandas_cleaning_empty_cells.asp
 
+# Doc panda methode string sur panda series
+# https://pandas.pydata.org/docs/user_guide/text.html#string-methods
+
 import pandas as pd
+import numpy as np
 
 df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
 
@@ -114,16 +118,57 @@ def indexsValeursDontLen(dataFrame, colonne, lenCible):
 
 # ---------Quantity --------------- Verifier si tte les valeurs sont des entiers
 
-contenueColonne = df["Quantity"]
+# Vérif les types de donnée
+def diffTypes(dataFrame, colonne):
 
-listeType = []
-debug = 0
-for elt in contenueColonne:
-    debug +=1
-    print(debug)
-    if type(elt) in listeType:
-        continue
-    else:
-        listeType.append(type(elt))
+    contenueColonne = dataFrame[colonne]
 
-print(listeType)
+    listeType = []
+    debug = 0
+    for elt in contenueColonne:
+        debug +=1
+        print(debug)
+        if type(elt) in listeType:
+            continue
+        else:
+            listeType.append(type(elt))
+
+    return listeType
+
+# listeTypes = diffTypes(df, "Quantity")
+# print(listeTypes)
+
+# ---------Quantity --------------- Verifier si valeurs manquantes (len==0)
+
+#Renvoie les diff len sachant initialemtn int =>, typecasting
+
+def diffLenv2(dataFrame, colonne): # typecast en len
+
+    contenueColonne = dataFrame[colonne]
+    liste = []
+
+    debug = 0
+    for elt in contenueColonne:
+        debug +=1
+        print(debug)
+        # Type cast si pas str
+        if type(elt) != "str":
+            if len(str(elt)) in liste:
+                continue
+            else:
+                liste.append(len(str(elt)))
+        # Si str
+        else:
+            if len(elt) in liste:
+                continue
+            else:
+                liste.append(len(elt))
+
+
+    return liste
+
+# diffLenPays = diffLenv2(df, "Country")
+# print(diffLenPays)
+
+# Renvoie le nombre de valeurs manquantes
+print(df["Country"].isna().sum())

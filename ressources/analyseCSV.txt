@@ -1,0 +1,42 @@
+Quantités negative => Avoir (partiel ou complet)
+
+StockCode particuliers => 
+    D : Discount
+    P : Post
+
+RangeIndex: 245903 entries, 0 to 245902
+Data columns (total 8 columns):
+ #   Column       Non-Null Count   Dtype
+---  ------       --------------   -----
+ 0   InvoiceNo    245903 non-null  object
+ 1   StockCode    245903 non-null  object
+ 2   Description  244979 non-null  object
+ 3   Quantity     245903 non-null  int64
+ 4   InvoiceDate  245903 non-null  object
+ 5   UnitPrice    245903 non-null  float64
+ 6   CustomerID   176889 non-null  float64
+ 7   Country      245903 non-null  object
+dtypes: float64(2), int64(1), object(5)
+memory usage: 15.0+ MB
+
+R4.  Le CSV représente des factures, mais aussi des avoirs (on dit aussi factures d’avoir).
+Les données négatives représentent des quantités sur des lignes de factures d’avoir.
+2 cas courants : 
+
+- Avoir partiel : on cherche à “réduire” le montant facturé d’un produit : 100€, avoir de -20€ , donc 80€ de montant effectif
+- Avoir complet : sorte d’annulation complète de cette vente : 100€, avoir de -100€ , donc 0€ et ligne de facture “annulée”
+
+Description : DOTCOM ??
+
+MCD à modifier en conséquence !
+
+Problèmes par champs:
+
+InvoiceNo -----
+    normalement longueur => 6
+    mais longueur 7 trouvé ex: C536391 ou encore C536506 => AVOIR Tout
+    pas d'autre valeur étrange trouvé
+
+Quantity -----
+    doit toujours être un entier
+

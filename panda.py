@@ -114,14 +114,16 @@ def indexsValeursDontLen(dataFrame, colonne, lenCible):
 
 # ---------Quantity --------------- Verifier si tte les valeurs sont des entiers
 
-# contenueColonne = df["Quantity"]
+contenueColonne = df["Quantity"]
 
-# listeType = []
-# debug = 0
-# for elt in contenueColonne:
-#     debug +=1
-#     print
-#     if type(elt) in listeType:
-#         continue
-#     else:
-#         listeType.append(type(elt))
+listeType = []
+debug = 0
+for elt in contenueColonne:
+    debug +=1
+    print(debug)
+    if type(elt) in listeType:
+        continue
+    else:
+        listeType.append(type(elt))
+
+print(listeType)

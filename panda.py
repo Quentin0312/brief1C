@@ -194,37 +194,76 @@ def diffLenv2(dataFrame, colonne): # typecast en len
 # test7 = re.fullmatch("1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", valeurCible)
 # test8 = re.fullmatch("1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", valeurCible)
 
-def verifFormatDate(valeurCible, listeTest):
+
+
+
+
+
+# valeurCible = "10/10/2011 9:11"
+
+# resultat = verifFormatDate(valeurCible=valeurCible, listeTest=listeTest)
+# print(resultat)
+
+# contenueColonne = df["InvoiceDate"]
+# indice = 0
+# for elt in contenueColonne:
+#     indice += 1
+#     resultat = verifFormatDate(valeurCible=elt, listeTest=listeTest)
+#     print(str(indice) + str(resultat))
+
+def verifFormatDateFinal(dataframe, colonne):
+    
+    def verifFormatDate(valeurCible, listeTest):
+        i=0
+        for elt in listeTest:
+            i+=1
+            test = re.fullmatch(elt, valeurCible)
+            if test:
+                resultat = "test"+str(i)+"validé"
+                return resultat
+
+        resultat = "Pas de correspondance !"
+        return resultat
+
+    
+    # x/x/xxxx xx:xx (2)
+    # x/x/xxxx x:xx (1)
+    # xx/x/xxxx xx:xx (3)
+    # xx/x/xxxx x:xx (4)
+    # x/xx/xxxx xx:xx (5)
+    # x/xx/xxxx x:xx (6)
+    # xx/xx/xxxx xx:xx (7)
+    # xx/xx/xxxx x:xx (8)
+
+    listeTest = ["[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #1
+        "[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #2
+        "1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #3
+        "1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #4
+        "[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #5
+        "[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #6
+        "1[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #7
+        "1[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]"] #8
+
+    contenueColonne = dataframe[colonne]
     i=0
-    for elt in listeTest:
+    erreurs = []
+    for elt in contenueColonne:
         i+=1
-        test = re.fullmatch(elt, valeurCible)
-        if test:
-            resultat = "test"+str(i)+"validé"
-            return resultat
+        resultat = verifFormatDate(elt, listeTest)
+        print(str(i) + str(resultat))
+        if resultat == "Pas de correspondance !":
+            erreurs.append(resultat + "à l'index :" + str(i))
+    
+    if erreurs == []:
+        return "Pas d'erreurs"
+    else :
+        return erreurs
 
-    resultat = "Pas de correspondance !"
-    return resultat
+# Utiliser plutot .to_date de panda => meilleurs et plus efficace
 
-# x/x/xxxx xx:xx (2)
-# x/x/xxxx x:xx (1)
-# xx/x/xxxx xx:xx (3)
-# xx/x/xxxx x:xx (4)
-# x/xx/xxxx xx:xx (5)
-# x/xx/xxxx x:xx (6)
-# xx/xx/xxxx xx:xx (7)
-# xx/xx/xxxx x:xx (8)
+# resultat = verifFormatDateFinal(df, "InvoiceDate")
+# print(resultat)
 
-listeTest = ["[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #1
-    "[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #2
-    "1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #3
-    "1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #4
-    "[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #5
-    "[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #6
-    "1[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #7
-    "1[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]"] #8
+# colonne = df["InvoiceDate"]
+# print(colonne)
 
-valeurCible = "10/10/2011 9:11"
-
-resultat = verifFormatDate(valeurCible=valeurCible, listeTest=listeTest)
-print(resultat)

@@ -54,8 +54,9 @@ InvoiceDate -----
     valeurs manquantes => aucune
     comment vérif le format plus précisement ? => regex ?
     diff format possible =>
-    x/x/xxxx x:xx (1) v
+    
     x/x/xxxx xx:xx (2) v
+    x/x/xxxx x:xx (1) v
     xx/x/xxxx xx:xx (3) v
     xx/x/xxxx x:xx (4) v
     x/xx/xxxx xx:xx (5) m v

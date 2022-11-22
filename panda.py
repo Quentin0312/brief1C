@@ -6,6 +6,7 @@
 
 import pandas as pd
 import numpy as np
+import re
 
 df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
 
@@ -119,7 +120,7 @@ def indexsValeursDontLen(dataFrame, colonne, lenCible):
 # ---------Quantity --------------- Verifier si tte les valeurs sont des entiers
 
 # Vérif les types de donnée
-def diffTypes(dataFrame, colonne):
+def diffTypes(dataFrame, colonne): # PAS PERTINENT=> 1 seul type de donné par champs 
 
     contenueColonne = dataFrame[colonne]
 
@@ -157,6 +158,7 @@ def diffLenv2(dataFrame, colonne): # typecast en len
                 continue
             else:
                 liste.append(len(str(elt)))
+                liste.append("index=>"+str(debug))
         # Si str
         else:
             if len(elt) in liste:
@@ -171,4 +173,43 @@ def diffLenv2(dataFrame, colonne): # typecast en len
 # print(diffLenPays)
 
 # Renvoie le nombre de valeurs manquantes
-print(df["Country"].isna().sum())
+# print(df["Quantity"].isna().sum())
+
+# ---------InvoiceDate------------- Vérifier le format (via nb de charactère)
+# https://pandas.pydata.org/docs/reference/api/pandas.to_datetime.html
+
+# nbCharDate = diffLenv2(df, "InvoiceDate")
+# print(nbCharDate)
+
+# ---------InvoiceDate------------- Vérifier les valeurs manquantes
+
+# print(df["InvoiceDate"].isna().sum())
+
+valeurCible = "1/105/2011 19:11"
+# test1 = re.fullmatch("[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", valeurCible)
+# test2 = re.fullmatch("[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", valeurCible)
+# test3 = re.fullmatch("1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", valeurCible)
+# test4 = re.fullmatch("1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", valeurCible)
+# test5 = re.fullmatch("[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", valeurCible)
+# test6 = re.fullmatch("[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", valeurCible)
+# test7 = re.fullmatch("1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", valeurCible)
+# test8 = re.fullmatch("1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", valeurCible)
+
+listeTest = ["[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #1
+    "[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #2
+    "1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #3
+    "1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #4
+    "[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #5
+    "[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", #6
+    "1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", #7
+    "1[0-9]/[1-3][0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]"] #8
+
+def verifFormatDate(valeurCible, listeTest):
+    i=0
+    for elt in listeTest:
+        i+=1
+        test = re.fullmatch(elt, valeurCible)
+        if test:
+            print("test"+str(i)+"validé")
+
+verifFormatDate(valeurCible=valeurCible, listeTest=listeTest)

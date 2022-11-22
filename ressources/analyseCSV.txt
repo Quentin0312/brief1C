@@ -42,5 +42,29 @@ Quantity -----
     valeur négative => avoir => vérifier combinaisons avec d'autre champs !! -----
     valeur positive => facture classique
     valeur "0" => existe pas À vérifier pour le ETL final
-    valeur manquante ?=>
+    valeur manquante ?=> aucune
+
+InvoiceDate -----
+    format : MM/JJ/AAAA hh:mm à vérifier
+    diff len
+    longueur 13 => ex : 1/5/2011 9:11
+    longueur 14 => ex : 12/1/2010 8:26
+    longueur 15 => ex : 12/1/2010 10:03
+    longueur 16 => ex : 12/10/2010 10:08
+    valeurs manquantes => aucune
+    comment vérif le format plus précisement ? => regex ?
+    diff format possible =>
+    x/x/xxxx x:xx (1) v
+    x/x/xxxx xx:xx (2) v
+    xx/x/xxxx xx:xx (3) v
+    xx/x/xxxx x:xx (4) v
+    x/xx/xxxx xx:xx (5) m v
+    x/xx/xxxx x:xx (6) m v
+    xx/xx/xxxx xx:xx (7) m v
+    xx/xx/xxxx x:xx (8) m v
+
+    "[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]"
+    "1[0-2]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]"
+    "1[0-2]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]"
+
 

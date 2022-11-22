@@ -185,7 +185,7 @@ def diffLenv2(dataFrame, colonne): # typecast en len
 
 # print(df["InvoiceDate"].isna().sum())
 
-valeurCible = "1/105/2011 19:11"
+valeurCible = "1/15/2011 19:11"
 # test1 = re.fullmatch("[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [0-9]:[0-5][0-9]", valeurCible)
 # test2 = re.fullmatch("[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", valeurCible)
 # test3 = re.fullmatch("1[0-9]/[0-9]/[1-2][0-9][0-9][0-9] [1-2][0-9]:[0-5][0-9]", valeurCible)
@@ -210,6 +210,11 @@ def verifFormatDate(valeurCible, listeTest):
         i+=1
         test = re.fullmatch(elt, valeurCible)
         if test:
-            print("test"+str(i)+"validé")
+            resultat = "test"+str(i)+"validé"
+            return resultat
 
-verifFormatDate(valeurCible=valeurCible, listeTest=listeTest)
+    resultat = "Pas de correspondance !"
+    return resultat
+
+resultat = verifFormatDate(valeurCible=valeurCible, listeTest=listeTest)
+print(resultat)

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block contenu %}
+<br>
+<h2>Importer/Ajouter à la base de données</h2>
+<form action="{% url 'list' %}" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.file }}
+    <input type="submit" value="Upload">
+</form>
+
+ 
+
+
+
+{% endblock %} 

@@ -3,6 +3,9 @@ from django.http import HttpResponse
 from django.template import loader
 from django.db import connections
 
+from . forms import UploadFileForm
+
+
 
 from .models import Factures, Produits, Contenir
 
@@ -29,3 +32,16 @@ def mainDashboard(request):
     #---------------------------------------------------------------------------------------------
 
     return render(request,"mainDashboard.html")
+
+def add(request):
+    return render(request, "add.html")
+
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        file = request.FILES['file'] # Juste à partir de la le script peut se lancer ? Car pas besoin de save le fichiers csv juste l'enregistrer en pandas dataframe ?
+        return HttpResponse("Nom du fichiers"+str(file))
+    # Etape 1 : Ouverture du lien => GET
+    else:
+        form = UploadFileForm()
+    return render(request, 'add.html', context={'form':form})

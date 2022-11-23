@@ -34,7 +34,7 @@ df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
 # 8- Country
 
 # À envoyer BDD => Facures: 1-5-8 ; Produits => 2 ; Details => 4-1-2
-for elt in df.loc:
+# for elt in df.loc:
 
     
 

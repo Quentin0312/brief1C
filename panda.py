@@ -4,6 +4,9 @@
 # Doc panda methode string sur panda series
 # https://pandas.pydata.org/docs/user_guide/text.html#string-methods
 
+# Panda .to_datetime
+# https://dataindependent.com/pandas/pandas-to-datetime-string-to-date-pd-to_datetime/
+
 import pandas as pd
 import numpy as np
 import re
@@ -32,10 +35,10 @@ df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
 
 # Compte les doublons
 # i = 0
-# for elt in df.duplicated():
+# for elt in df.duplicated(subset=['InvoiceNo','StockCode'], keep='first'):
 #     if elt == True:
 #         i+= 1
-#         # print(str(elt) +str(i))
+#         print(str(elt) +str(i))
 # print(i)
 
 # Affiche row selon conditions 
@@ -267,3 +270,14 @@ def verifFormatDateFinal(dataframe, colonne):
 # colonne = df["InvoiceDate"]
 # print(colonne)
 
+# Pandas .to_datetime ----------------------
+
+# colonneDate = df["InvoiceDate"]
+
+#colonneDate = pd.to_datetime(colonneDate, format="%m/%d/%Y %H:%M")
+# pd.to_datetime(df["InvoiceDate"], format="%m/%d/%Y %H:%M", errors='coerce')
+
+# print(type(colonneDate[1]))
+# print(type(df["InvoiceDate"][1]))
+
+# ------------------------------------------

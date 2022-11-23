@@ -24,18 +24,18 @@ df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
 # --------------------------------
 
 # Envoi BDD-----------------------
-# 1- InvoiceNo
-# 2- StockCode
-# 3- Description
-# 4- Quantity
-# 5- InvoiceDate
-# 6- UnitPrice
-# 7- CustomerID
-# 8- Country
+# 0- InvoiceNo
+# 1- StockCode
+# 2- Description
+# 3- Quantity
+# 4- InvoiceDate
+# 5- UnitPrice
+# 6- CustomerID
+# 7- Country
 
-# À envoyer BDD => Factures: 1-5-8 ; Produits => 2 ; Details => 4-1-2
+# À envoyer BDD => Factures: 0-4-7 ; Produits => 1 ; Details => 3-0-1
 # for elt in df.loc:
-
+# ex: elt[1] => stockcode
     
 
 #---------------------------------

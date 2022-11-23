@@ -5,9 +5,19 @@ from django.db import connections
 
 from . forms import UploadFileForm
 
-
-
 from .models import Factures, Produits, Contenir
+
+import pandas as pd
+
+def csvToBDD(dataframe):
+
+    for elt in dataframe.loc:
+
+        cursor = connections['default'].cursor()
+
+        cursor.execute("INSERT INTO produits(codeproduit) VALUES( %s )", [elt[1]])
+        cursor.execute("INSERT INTO factures(nofacture,region) VALUES( %s , %s )", [elt[0], elt[7]]) # Manque date
+        cursor.execute("INSERT INTO contenir(nofacture,codeproduit,qte) VALUES ( %s , %s , %s )",[elt[0], elt[1], elt[3]])
 
 # Attention type de nofacture dans BDD à changer => varchar
 
@@ -40,8 +50,12 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         file = request.FILES['file'] # Juste à partir de la le script peut se lancer ? Car pas besoin de save le fichiers csv juste l'enregistrer en pandas dataframe ?
-        return HttpResponse("Nom du fichiers"+str(file))
+        df = pd.read_csv(file)
+        csvToBDD(df)
+
+        return HttpResponse("Nom du fichiers: "+str(df))
     # Etape 1 : Ouverture du lien => GET
     else:
         form = UploadFileForm()
     return render(request, 'add.html', context={'form':form})
+

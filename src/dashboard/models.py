@@ -3,7 +3,7 @@ from django.db import models
 # Create your models here.
 
 class Factures(models.Model):
-    nofacture = models.IntegerField(primary_key=True)
+    nofacture = models.CharField(max_length = 50, primary_key=True)
     datefacturation = models.DateField(blank=True, null=True)
     region = models.CharField(max_length=50, blank=True, null=True)
 

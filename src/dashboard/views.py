@@ -64,14 +64,38 @@ def mainDashboard(request):
 
     return render(request,"mainDashboard.html")
 
+# découper l'interieur en fonctions
 def graphPays(request):
+
+    # Requette SQL
     cursor = connections['default'].cursor()
-    cursor.execute("SELECT factures.region, COUNT(*) AS vente FROM factures INNER JOIN contenir ON factures.nofacture = contenir.nofacture GROUP BY factures.region ORDER BY vente DESC")
+    # TOP 10 seulement
+    cursor.execute("SELECT factures.region, COUNT(*) AS vente FROM factures INNER JOIN contenir ON factures.nofacture = contenir.nofacture GROUP BY factures.region ORDER BY vente DESC LIMIT 10")
     rows = cursor.fetchall()
     print(rows)
     print(type(rows))
 
-    return render(request, "graphPays.html")
+    # BDD to variable
+    labels = []
+    valeurs = []
+
+    for elt in rows:
+        for subElt in elt:
+            if isinstance(subElt, str):
+                labels.append(subElt)
+            else:
+                valeurs.append(subElt)
+    
+    print("Labels=> "+str(labels))
+    print("Valeurs=> "+str(valeurs))
+
+    # Context
+    context = {
+        'labels' : labels,
+        'data' : valeurs,
+    }
+
+    return render(request, "graphPays.html", context)
 
 def upload_file(request):
     if request.method == 'POST':

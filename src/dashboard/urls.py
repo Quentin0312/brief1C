@@ -5,5 +5,6 @@ from . import views
 urlpatterns = [
     path('', views.mainDashboard, name="mainDashboard"),
     path('add', views.upload_file, name='add'),
-    path('graphPays', views.graphPays, name="graphPays")
+    path('graphPays', views.graphPays, name="graphPays"),
+    path('graphProduits', views.graphProduits, name="graphProduits")
 ]

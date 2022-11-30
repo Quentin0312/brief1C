@@ -75,19 +75,8 @@ def graphPays(request):
     print(rows)
     print(type(rows))
 
-    # BDD to variable
-    labels = []
-    valeurs = []
-
-    for elt in rows:
-        for subElt in elt:
-            if isinstance(subElt, str):
-                labels.append(subElt)
-            else:
-                valeurs.append(subElt)
-    
-    print("Labels=> "+str(labels))
-    print("Valeurs=> "+str(valeurs))
+    # row to variable
+    valeurs, labels = rowToVariable(rows)
 
     # Context
     context = {
@@ -113,3 +102,36 @@ def upload_file(request):
         form = UploadFileForm()
     return render(request, 'add.html', context={'form':form}) #Actualise la page en ajoutant le form file en context
 
+def graphProduits(request):
+
+    # Requete SQL
+    cursor = connections['default'].cursor()
+    cursor.execute("SELECT codeproduit, COUNT(*) AS vente FROM contenir GROUP BY codeproduit ORDER BY vente DESC LIMIT 10")
+    rows = cursor.fetchall()
+
+    valeurs, labels = rowToVariable(rows)
+
+    # Context
+    context = {
+        'labels' : labels,
+        'data' : valeurs,
+    }
+
+    return render(request, "graphProduits.html", context)
+
+def rowToVariable(rows):
+    labels = []
+    valeurs = []
+
+    for elt in rows:
+        for subElt in elt:
+            if isinstance(subElt, str):
+                labels.append(subElt)
+            else:
+                valeurs.append(subElt)
+    
+    print("Labels=> "+str(labels))
+    print("Valeurs=> "+str(valeurs))
+    
+    return valeurs,labels
+    

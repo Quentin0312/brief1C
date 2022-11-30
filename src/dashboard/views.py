@@ -9,6 +9,7 @@ from .models import Factures, Produits, Contenir
 
 import pandas as pd
 
+# Fonctions
 def csvToBDD(dataframe):
     from datetime import datetime
     dateDebut = datetime.now()
@@ -41,7 +42,7 @@ def csvToBDD(dataframe):
     print("dateDebut=>"+str(dateDebut)+"  ;"+"dateFin=>"+str(dateFin))
 # Attention type de nofacture dans BDD à changer => varchar
 
-# Create your views here.
+# Views
 def mainDashboard(request):
 
     # for elt in Factures.objects.raw('SELECT * FROM factures'):
@@ -63,8 +64,14 @@ def mainDashboard(request):
 
     return render(request,"mainDashboard.html")
 
-def add(request):
-    return render(request, "add.html")
+def graphPays(request):
+    cursor = connections['default'].cursor()
+    cursor.execute("SELECT factures.region, COUNT(*) AS vente FROM factures INNER JOIN contenir ON factures.nofacture = contenir.nofacture GROUP BY factures.region ORDER BY vente DESC")
+    rows = cursor.fetchall()
+    print(rows)
+    print(type(rows))
+
+    return render(request, "graphPays.html")
 
 def upload_file(request):
     if request.method == 'POST':

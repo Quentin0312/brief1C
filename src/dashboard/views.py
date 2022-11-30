@@ -70,7 +70,7 @@ def graphPays(request):
     # Requette SQL
     cursor = connections['default'].cursor()
     # TOP 10 seulement
-    cursor.execute("SELECT factures.region, COUNT(*) AS vente FROM factures INNER JOIN contenir ON factures.nofacture = contenir.nofacture GROUP BY factures.region ORDER BY vente DESC LIMIT 10")
+    cursor.execute("SELECT factures.region, COUNT(*) AS vente FROM factures INNER JOIN contenir ON factures.nofacture = contenir.nofacture GROUP BY factures.region ORDER BY vente DESC LIMIT 5")
     rows = cursor.fetchall()
     print(rows)
     print(type(rows))

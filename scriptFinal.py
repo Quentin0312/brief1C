@@ -39,3 +39,14 @@ df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
     
 
 #---------------------------------
+
+# Labo conversion numpy64int to int
+
+iteration = 0
+
+for elt in df.loc:
+    iteration +=1
+    # apresConversion = elt[3].item()
+    print(type(elt[3].item()))
+    if iteration > 5:
+        break

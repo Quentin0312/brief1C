@@ -10,15 +10,35 @@ from .models import Factures, Produits, Contenir
 import pandas as pd
 
 def csvToBDD(dataframe):
-
+    from datetime import datetime
+    dateDebut = datetime.now()
+    iterations = 0
     for elt in dataframe.loc:
+        iterations +=1
+        print(iterations)
 
         cursor = connections['default'].cursor()
 
-        cursor.execute("INSERT INTO produits(codeproduit) VALUES( %s )", [elt[1]])
-        cursor.execute("INSERT INTO factures(nofacture,region) VALUES( %s , %s )", [elt[0], elt[7]]) # Manque date
-        cursor.execute("INSERT INTO contenir(nofacture,codeproduit,qte) VALUES ( %s , %s , %s )",[elt[0], elt[1], elt[3]])
+        # Ordre important => FK...
+        # Importation dans la table Porduits
+        try: # codeproduit = PK mais apparait pls fois, ceci ne pose pas probleme pour la suite ... pour l'instant
+            cursor.execute("INSERT INTO produits(codeproduit) VALUES( %s )", [elt[1]])
+        except:
+            pass
 
+        # Importation dans la table factures
+        try: # nofacture = PK mais redondante dans le csv => cause donc erreur, ignorer n'est pas un probleme sauf si le csv ne correspond pas à ce qu'attendu
+            cursor.execute("INSERT INTO factures(nofacture,datefacturation,region) VALUES( %s , %s , %s )", [elt[0], elt[4], elt[7]])
+        except:
+            pass
+        
+        # Importation dans la table contenir
+        try:
+            cursor.execute("INSERT INTO contenir(nofacture,codeproduit,qte) VALUES ( %s , %s , %s )",[elt[0], elt[1], elt[3].item()]) # .item() transforme numpy.int64 en int "classique" accépté par postgreSQL
+        except:
+            pass
+    dateFin = datetime.now()
+    print("dateDebut=>"+str(dateDebut)+"  ;"+"dateFin=>"+str(dateFin))
 # Attention type de nofacture dans BDD à changer => varchar
 
 # Create your views here.
@@ -50,12 +70,15 @@ def upload_file(request):
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
         file = request.FILES['file'] # Juste à partir de la le script peut se lancer ? Car pas besoin de save le fichiers csv juste l'enregistrer en pandas dataframe ?
+        
+        # Debut "script" d'importation
         df = pd.read_csv(file)
+        # Ici aplliquer fonction de nettoyage qui renvoie un dataframe à reutiliser juste après
         csvToBDD(df)
 
         return HttpResponse("Nom du fichiers: "+str(df))
     # Etape 1 : Ouverture du lien => GET
     else:
         form = UploadFileForm()
-    return render(request, 'add.html', context={'form':form})
+    return render(request, 'add.html', context={'form':form}) #Actualise la page en ajoutant le form file en context
 

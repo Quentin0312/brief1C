@@ -4,6 +4,5 @@ from . import views
 
 urlpatterns = [
     path('', views.mainDashboard, name="mainDashboard"),
-    path('add', views.add, name="add"),
-    path('list', views.upload_file, name='list')
+    path('add', views.upload_file, name='add')
 ]

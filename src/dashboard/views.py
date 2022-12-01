@@ -13,8 +13,6 @@ from django_pivot.pivot import pivot
 
 # Fonctions
 def csvToBDD(dataframe):
-    from datetime import datetime
-    dateDebut = datetime.now()
     iterations = 0
     for elt in dataframe.loc:
         iterations +=1
@@ -40,9 +38,20 @@ def csvToBDD(dataframe):
             cursor.execute("INSERT INTO contenir(nofacture,codeproduit,qte) VALUES ( %s , %s , %s )",[elt[0], elt[1], elt[3].item()]) # .item() transforme numpy.int64 en int "classique" accépté par postgreSQL
         except:
             pass
-    dateFin = datetime.now()
-    print("dateDebut=>"+str(dateDebut)+"  ;"+"dateFin=>"+str(dateFin))
-# Attention type de nofacture dans BDD à changer => varchar
+
+def recupererListeProduits(rows):
+    listeProduits = []
+    for elt in rows:
+        if elt[1] not in listeProduits:
+            listeProduits.append(elt[1])
+    return listeProduits
+
+def recupererListePays(rows):
+    listePays = []
+    for elt in rows:
+        if elt[0] not in listePays:
+            listePays.append(elt[0])
+    return listePays
 
 def rowToVariable(rows):
     labels = []
@@ -59,6 +68,37 @@ def rowToVariable(rows):
     print("Valeurs=> "+str(valeurs))
     
     return valeurs,labels
+
+def produitGraphDataset(listePays,listeProduits,rows):
+    dictionnaireData = {}
+    # Par pays
+    for pays in listePays:
+        print(pays)
+
+        listeData = [] # Contient liste des data pour 1 pays donc pour une serie de data pour chart js
+        # Par produit
+        for produit in listeProduits:
+            # Verifie toutes les lignes
+            for elt in rows:
+                trouvee = False
+                if pays in elt and produit in elt: # Si dans cette ligne le pays et le produit correspond => recupere la vente
+                    listeData.append(elt[2])
+                    trouvee = True
+
+            # Si pas trouvé ajoute 0 a la liste pour respecter "format data" nécessaire pour chart js
+            if trouvee == False:
+                listeData.append(0)
+
+        dictionnaireData[pays] = listeData # À envoyer dans le contexte pour chart JS
+        listeData = [] # Réinitialiser pour pays suivant
+    return dictionnaireData
+
+def selectSQL(scriptSQL):
+    cursor = connections['default'].cursor()
+    cursor.execute(scriptSQL)
+    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
+    return rows
+    
 
 # Views
 def mainDashboard(request):
@@ -140,82 +180,22 @@ def upload_file(request):
 def graphTCD(request):
 
     # Requette SQL
-    cursor = connections['default'].cursor()
+    rows = selectSQL('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC')
 
-    cursor.execute('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC')
-    rows = cursor.fetchall()
-    # print(rows)
+    # Récuperer la liste des produits
+    listeProduits = recupererListeProduits(rows)
 
-    # Traitement, formatage pour chart js
-    # listeProduits = []
-    # for elt in rows:
-    #     i=1
-    #     for subelt in elt:
-    #         if i == 2 and subelt not in listeProduits:
-    #             listeProduits.append(subelt)
-    #         i+=1
+    # Récuperer la liste des pays
+    listePays = recupererListePays(rows)
 
-    listeProduits = []
-    for elt in rows:
-        if elt[1] not in listeProduits:
-            listeProduits.append(elt[1])
-
-    print(listeProduits)
-
-    listePays = []
-    for elt in rows:
-        if elt[0] not in listePays:
-            listePays.append(elt[0])
-    print(listePays)
-
-    # z = 1
-    # for pays in listePays:
-    #     if z == 1:
-    #         z += 1
-    #         listeData = []
-    #         for produit in listeProduits:
-    #             for elt in rows:
-    #                 if pays and produit in elt:
-    #                     listeData.append(elt[2])
-    # print(listeData)
-
-    # Attention mettre 0 et pas laisser vide si pas de correspondance car décalage sinon
-    # ATTENTION
-        # ATTENTION
-            # ATTENTION
-                # ATTENTION
-                    # ATTENTION
-    
-    dictionnaireData = {}
-    for pays in listePays:
-        print("itération")
-
-        listeData = []
-        for produit in listeProduits:
-            for elt in rows:
-                trouvee = False
-                if pays in elt and produit in elt:
-                    listeData.append(elt[2])
-                    trouvee = True
-            if trouvee == False:
-                listeData.append(0)
-                
-        dictionnaireData[pays] = listeData
-        listeData = []
-    # print(dictionnaireData)
-    
-    # print(len(dictionnaireData["United Kingdom"]))
-    # print(len(dictionnaireData["Germany"]))
-
+    # Produit datasets pour chart JS
+    dictionnaireData = produitGraphDataset(listePays,listeProduits,rows)
 
     context={
         'labels' : listeProduits,
         'dicoData' : dictionnaireData,
         'listePays': listePays 
     }
-
-
-
 
     return render(request, "graphTCD.html", context)
 

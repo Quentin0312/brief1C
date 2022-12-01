@@ -1,0 +1,20 @@
+{% extends 'base.html' %}
+
+{% block contenu %}
+{% load static %}
+<h1>Graph TCD</h1>
+<!-- <script src="https://code.jquery.com/jquery-3.6.1.js" integrity="sha256-3zlB5s2uwoUzrXK3BT7AX3FyvojsraNFxCc2vC/7pNI=" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pivottable/2.23.0/pivot.min.js"></script> -->
+
+<div id="container" style="width: 75%;">
+    <canvas id="bar-chart"></canvas>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+<script>
+    labels = {{ labels|safe }}
+    dataTest = {{ dataTest|safe }} 
+</script>
+<script src="{% static 'graphBarStacked.js' %}"></script>
+
+
+{% endblock %}

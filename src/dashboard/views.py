@@ -9,6 +9,8 @@ from .models import Factures, Produits, Contenir
 
 import pandas as pd
 
+from django_pivot.pivot import pivot
+
 # Fonctions
 def csvToBDD(dataframe):
     from datetime import datetime
@@ -41,6 +43,22 @@ def csvToBDD(dataframe):
     dateFin = datetime.now()
     print("dateDebut=>"+str(dateDebut)+"  ;"+"dateFin=>"+str(dateFin))
 # Attention type de nofacture dans BDD à changer => varchar
+
+def rowToVariable(rows):
+    labels = []
+    valeurs = []
+    print(rows)
+    for elt in rows:
+        for subElt in elt:
+            if isinstance(subElt, str):
+                labels.append(subElt)
+            else:
+                valeurs.append(subElt)
+    
+    print("Labels=> "+str(labels))
+    print("Valeurs=> "+str(valeurs))
+    
+    return valeurs,labels
 
 # Views
 def mainDashboard(request):
@@ -86,22 +104,6 @@ def graphPays(request):
 
     return render(request, "graphPays.html", context)
 
-def upload_file(request):
-    if request.method == 'POST':
-        form = UploadFileForm(request.POST, request.FILES)
-        file = request.FILES['file'] # Juste à partir de la le script peut se lancer ? Car pas besoin de save le fichiers csv juste l'enregistrer en pandas dataframe ?
-        
-        # Debut "script" d'importation
-        df = pd.read_csv(file)
-        # Ici aplliquer fonction de nettoyage qui renvoie un dataframe à reutiliser juste après
-        csvToBDD(df)
-
-        return HttpResponse("Nom du fichiers: "+str(df))
-    # Etape 1 : Ouverture du lien => GET
-    else:
-        form = UploadFileForm()
-    return render(request, 'add.html', context={'form':form}) #Actualise la page en ajoutant le form file en context
-
 def graphProduits(request):
 
     # Requete SQL
@@ -119,19 +121,68 @@ def graphProduits(request):
 
     return render(request, "graphProduits.html", context)
 
-def rowToVariable(rows):
-    labels = []
-    valeurs = []
+def upload_file(request):
+    if request.method == 'POST':
+        form = UploadFileForm(request.POST, request.FILES)
+        file = request.FILES['file'] # Juste à partir de la le script peut se lancer ? Car pas besoin de save le fichiers csv juste l'enregistrer en pandas dataframe ?
+        
+        # Debut "script" d'importation
+        df = pd.read_csv(file)
+        # Ici aplliquer fonction de nettoyage qui renvoie un dataframe à reutiliser juste après
+        csvToBDD(df)
 
+        return HttpResponse("Nom du fichiers: "+str(df))
+    # Etape 1 : Ouverture du lien => GET
+    else:
+        form = UploadFileForm()
+    return render(request, 'add.html', context={'form':form}) #Actualise la page en ajoutant le form file en context
+
+def graphTCD(request):
+
+    # Requette SQL
+    cursor = connections['default'].cursor()
+
+    cursor.execute('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC')
+    rows = cursor.fetchall()
+    # print(rows)
+
+    # Traitement, formatage pour chart js
+    listeProduits = []
     for elt in rows:
-        for subElt in elt:
-            if isinstance(subElt, str):
-                labels.append(subElt)
-            else:
-                valeurs.append(subElt)
-    
-    print("Labels=> "+str(labels))
-    print("Valeurs=> "+str(valeurs))
-    
-    return valeurs,labels
+        i=1
+        for subelt in elt:
+            if i == 2 and subelt not in listeProduits:
+                listeProduits.append(subelt)
+            i+=1
+    # print(listeProduits)
+
+    listePays = []
+    for elt in rows:
+        if elt[0] not in listePays:
+            listePays.append(elt[0])
+    print(listePays)
+
+    z = 1
+    for pays in listePays:
+        if z == 1:
+            z += 1
+            listeData = []
+            for produit in listeProduits:
+                for elt in rows:
+                    if pays and produit in elt:
+                        listeData.append(elt[2])
+    print(listeData)
+
+
+    context={
+        'labels' : listeProduits,
+        'dataTest' : listeData
+    }
+
+
+
+
+    return render(request, "graphTCD.html", context)
+
+
     

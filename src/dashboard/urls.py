@@ -6,5 +6,6 @@ urlpatterns = [
     path('', views.mainDashboard, name="mainDashboard"),
     path('add', views.upload_file, name='add'),
     path('graphPays', views.graphPays, name="graphPays"),
-    path('graphProduits', views.graphProduits, name="graphProduits")
+    path('graphProduits', views.graphProduits, name="graphProduits"),
+    path('graphTCD', views.graphTCD, name="graphTCD"),
 ]

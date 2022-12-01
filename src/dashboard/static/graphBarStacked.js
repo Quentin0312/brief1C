@@ -1,29 +1,25 @@
 const DATA_COUNT = 7;
 const NUMBER_CFG = {count: DATA_COUNT, min: -100, max: 100};
 
+var randomColor = Math.floor(Math.random()*16777215).toString(16);
+var color = "#"+randomColor
+
+listeData = []
+indice = -1
+for(elt in listePays){
+    indice +=1
+    listeData.push({
+        label: listePays[indice],
+        data: dicoData[listePays[indice]],
+        backgroundColor: "#"+Math.floor(Math.random()*16777215).toString(16),
+        stack: 'Stack 0'
+    })
+}
+
 // const labels = [1,2,3,4,5,6,7]
 const data = {
   labels: labels,
-  datasets: [
-    {
-      label: listePays[0],
-      data: dicoData[listePays[0]],
-      backgroundColor: 'blue',
-      stack: 'Stack 0'
-    },
-    {
-        label: listePays[1],
-        data: dicoData[listePays[1]],
-        backgroundColor: 'red',
-        stack: 'Stack 0'
-    },
-    {
-        label: listePays[5],
-        data: dicoData[listePays[5]],
-        backgroundColor: 'green',
-        stack: 'Stack 0'
-    }
-  ]
+  datasets: listeData
 };
 
 const config = {

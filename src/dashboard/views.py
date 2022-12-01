@@ -128,9 +128,24 @@ def graphProduits(request):
             form.save()
             return HttpResponseRedirect('graphProduits')
     
-    # Requete SQL
+    # Requetes SQL
+
+        # Recup TOP X
+    try:
+        top = selectSQL("SELECT LAST_VALUE(param1) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='produits' LIMIT 1")
+        if top == []:
+            top = 10
+        else:
+            for elt in top:
+                top = elt
+    except:
+        top = 10
+    print("ici=>")
+    print(top)
         # TOP 10
-    rows = selectSQL("SELECT codeproduit, COUNT(*) AS vente FROM contenir GROUP BY codeproduit ORDER BY vente DESC LIMIT 10")
+    cursor = connections['default'].cursor()
+    cursor.execute("SELECT codeproduit, COUNT(*) AS vente FROM contenir GROUP BY codeproduit ORDER BY vente DESC LIMIT %s",[top])
+    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
 
     # Récuperation datasets pour chart JS
     valeurs, labels = rowToVariable(rows)

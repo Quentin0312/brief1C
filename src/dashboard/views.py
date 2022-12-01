@@ -142,7 +142,7 @@ def graphTCD(request):
     # Requette SQL
     cursor = connections['default'].cursor()
 
-    cursor.execute('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC ')
+    cursor.execute('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC')
     rows = cursor.fetchall()
     # print(rows)
 
@@ -193,8 +193,13 @@ def graphTCD(request):
         listeData = []
         for produit in listeProduits:
             for elt in rows:
+                trouvee = False
                 if pays in elt and produit in elt:
                     listeData.append(elt[2])
+                    trouvee = True
+            if trouvee == False:
+                listeData.append(0)
+                
         dictionnaireData[pays] = listeData
         listeData = []
     # print(dictionnaireData)

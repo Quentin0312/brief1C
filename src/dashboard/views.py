@@ -10,7 +10,7 @@ from django.db import connections
 import pandas as pd
 
 
-# Fonctions
+# Fonctions -------------------------------------------
 def csvToBDD(dataframe):
     iterations = 0
     for elt in dataframe.loc:
@@ -98,8 +98,28 @@ def selectSQL(scriptSQL):
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
     return rows
     
+def recupererTopX(nomGraph):
+    try:
+        topSQL = "SELECT LAST_VALUE(param1) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='"+ nomGraph +"' LIMIT 1"
+        top = selectSQL(topSQL)
+        if top == []:
+            top = 10
+        else:
+            for elt in top:
+                for subelt in elt:
+                    top = subelt
+    except:
+        top = 10
+    return top
 
-# Views
+def selectSQLtop(top):
+    requeteSQL = "SELECT codeproduit, COUNT(*) AS vente FROM contenir GROUP BY codeproduit ORDER BY vente DESC LIMIT "+str(top)
+    cursor = connections['default'].cursor()
+    cursor.execute(requeteSQL)
+    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
+    return rows
+
+# Views -----------------------------------------------
 def mainDashboard(request):
 
     return render(request,"mainDashboard.html")
@@ -122,32 +142,21 @@ def graphPays(request):
     return render(request, "graphPays.html", context)
 
 def graphProduits(request):
+
+    # Situation entrée valeur top
     if request.method == "POST":
         form = ParamForm(request.POST)
         if form.is_valid():
             form.save()
             return HttpResponseRedirect('graphProduits')
-    
-    # Requetes SQL
 
-        # Recup TOP X
-    try:
-        top = selectSQL("SELECT LAST_VALUE(param1) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='produits' LIMIT 1")
-        if top == []:
-            top = 10
-        else:
-            for elt in top:
-                top = elt
-    except:
-        top = 10
-    print("ici=>")
-    print(top)
-        # TOP 10
-    cursor = connections['default'].cursor()
-    cursor.execute("SELECT codeproduit, COUNT(*) AS vente FROM contenir GROUP BY codeproduit ORDER BY vente DESC LIMIT %s",[top])
-    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
+    # Recup SQL qui recupère le TOP X           ATTENTION IL FAUT METTRE EN PLACE UN SYST DE "NETTOYAGE" POUR LES ANCIENNES VALEURS...FAUT QUE C'EST PROPRE!!
+    top = recupererTopX("produits")
 
-    # Récuperation datasets pour chart JS
+    # Requete SQL pour récuperer datasets, nécessite top x
+    rows = selectSQLtop(top)
+
+    # Transformation rows en datasets compatible pour chart JS
     valeurs, labels = rowToVariable(rows)
 
     # Context
@@ -169,7 +178,7 @@ def upload_file(request):
         # Debut "script" d'importation
         df = pd.read_csv(file)
 
-        # Ici aplliquer fonction de nettoyage qui renvoie un dataframe à reutiliser juste après
+        # Ici appliquer fonction de nettoyage qui renvoie un dataframe à reutiliser juste après
         
         # Importation dans la BDD
         csvToBDD(df)

@@ -5,24 +5,29 @@
 
 <h1>Graphiques : Ventes par produits</h1>
 
+<!-- Form TOP X --------------------------------------------------------------------------------------------------------->
 <form action method ="POST">
     {% csrf_token %}
     <!-- {{form.as_p}} -->
+
+    <!-- colonne nomgraph dans table paramgraph -->
     <p>
-        <labe for="id_nomgraph">Nomgraph:</label>
-        <input type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph" value="produits">
+        <label hidden for="id_nomgraph">Nomgraph:</label>
+        <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph" value="produits">
     </p>
+
+    <!-- Entrée valeur TOP  -->
     <p>
-        <label for="id_param1">Param1:</label>
+        <label for="id_param1">Top  :</label>
         <input type="number" name="param1" id="id_param1">
+        <input type="submit" name="test" value="voir">
     </p>
-    <input type="submit" name="test" value="envoyer">
 </form>
 
-<!-- Graphique -->
+<!-- Graphique --------------------------------------------------------------------------------------------------------->
 <div id="container" style="width: 100%;">
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-5">
             <!-- Camembert -->
             <canvas id="pie-chart"></canvas>
         </div>
@@ -33,6 +38,10 @@
 
     </div>
 </div>
+
+<!-- Bouton retour -->
+<br>
+<a href="http://127.0.0.1:8000/dashboard/">Retour</a> <!--Attention au déploiement, à changer-->
 
 <!-- Chart JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>

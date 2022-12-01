@@ -3,26 +3,47 @@
 {% block contenu %}
 {% load static %}
 
-<h1>Graph Produits</h1>
+<h1>Graphiques : Ventes par produits</h1>
+
+<form action method ="POST">
+    {% csrf_token %}
+    <!-- {{form.as_p}} -->
+    <p>
+        <labe for="id_nomgraph">Nomgraph:</label>
+        <input type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph" value="produits">
+    </p>
+    <p>
+        <label for="id_param1">Param1:</label>
+        <input type="number" name="param1" id="id_param1">
+    </p>
+    <input type="submit" name="test" value="envoyer">
+</form>
+
+<!-- Graphique -->
 <div id="container" style="width: 100%;">
     <div class="row">
         <div class="col-md-6">
+            <!-- Camembert -->
             <canvas id="pie-chart"></canvas>
         </div>
         <div class="col-md-6">
+            <!-- Histogramme -->
             <canvas id="bar-chart"></canvas>
         </div>
 
     </div>
-
-
 </div>
+
+<!-- Chart JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+<!-- Datasets -->
 <script>
     data  = {{ data|safe }};
     labels = {{ labels|safe }};
 </script>
 
-<script src="{% static 'graphBar.js' %}"></script>
+<!-- Graphs -->
+<script src="{% static 'graphBarAndPie.js' %}"></script>
 
 {% endblock %}

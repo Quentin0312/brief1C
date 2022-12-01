@@ -27,3 +27,11 @@ class Contenir(models.Model):
         managed = False
         db_table = 'contenir'
         unique_together = (('nofacture', 'codeproduit'),)
+
+class Paramgraph(models.Model):
+    auto_increment_id = models.AutoField(primary_key=True)
+    nomgraph = models.CharField(max_length=50)
+    param1 = models.IntegerField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'paramgraph'

@@ -2,17 +2,25 @@
 
 {% block contenu %}
 {% load static %}
-<h1>Graph TCD</h1>
 
+<h1>Graphique : Ventes selons produits et pays</h1>
+
+<!-- Affichage graphique -->
 <div id="container" style="width: 100%;">
     <canvas id="bar-chart"></canvas>
 </div>
+
+<!-- Chart JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+
+<!-- Datasets -->
 <script>
     labels = {{ labels|safe }};
     dicoData = {{ dicoData|safe }};
     listePays = {{ listePays|safe }};
 </script>
+
+<!-- Graphique -->
 <script src="{% static 'graphBarStacked.js' %}"></script>
 
 

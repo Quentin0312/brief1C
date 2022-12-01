@@ -8,7 +8,7 @@ const configBar = {
             ],
             label: 'Ventes'
         }
-        // Essayer pouvoir selectionner donné dans chart js avec formulaire
+        // Essayer pouvoir selectionner données dans chart js avec formulaire
         // modifiant data et labels
         ],
         labels: labels
@@ -36,8 +36,11 @@ const configPie = {
     };
 
     window.onload = function() {
-    var ctx = document.getElementById('bar-chart').getContext('2d');
-    window.myPie = new Chart(ctx, configBar);
-    var ctxPie = document.getElementById('pie-chart').getContext('2d');
-    window.myPie = new Chart(ctxPie, configPie);
+        // Histogramme
+        var ctx = document.getElementById('bar-chart').getContext('2d');
+        window.myPie = new Chart(ctx, configBar);
+        
+        // Camembert
+        var ctxPie = document.getElementById('pie-chart').getContext('2d');
+        window.myPie = new Chart(ctxPie, configPie);
     };

@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 
-from . forms import UploadFileForm
+from .forms import UploadFileForm, ParamForm
 
 from .models import Factures, Produits, Contenir
 from django.db import connections
@@ -122,7 +122,12 @@ def graphPays(request):
     return render(request, "graphPays.html", context)
 
 def graphProduits(request):
-
+    if request.method == "POST":
+        form = ParamForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('graphProduits')
+    
     # Requete SQL
         # TOP 10
     rows = selectSQL("SELECT codeproduit, COUNT(*) AS vente FROM contenir GROUP BY codeproduit ORDER BY vente DESC LIMIT 10")
@@ -131,9 +136,11 @@ def graphProduits(request):
     valeurs, labels = rowToVariable(rows)
 
     # Context
+    form = ParamForm
     context = {
         'labels' : labels,
         'data' : valeurs,
+        'form' : form
     }
 
     return render(request, "graphProduits.html", context)

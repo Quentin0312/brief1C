@@ -15,8 +15,6 @@ for(elt in listePays){
         stack: 'Stack 0'
     })
 }
-
-// const labels = [1,2,3,4,5,6,7]
 const data = {
   labels: labels,
   datasets: listeData
@@ -46,6 +44,8 @@ const config = {
       }
     }
   };
+
+  // Afficher dans le HTML
   window.onload = function() {
     var ctx = document.getElementById('bar-chart').getContext('2d');
     window.myPie = new Chart(ctx, config);

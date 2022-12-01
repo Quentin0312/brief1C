@@ -1,4 +1,4 @@
-const config = {
+const configBar = {
     type: 'bar',
     data: {
         datasets: [{
@@ -18,7 +18,7 @@ const config = {
     }
     };
 
-const config2 = {
+const configPie = {
     type: 'pie',
     data: {
         datasets: [{
@@ -37,7 +37,7 @@ const config2 = {
 
     window.onload = function() {
     var ctx = document.getElementById('bar-chart').getContext('2d');
-    window.myPie = new Chart(ctx, config);
-    var ctx2 = document.getElementById('pie-chart').getContext('2d');
-    window.myPie = new Chart(ctx2, config2);
+    window.myPie = new Chart(ctx, configBar);
+    var ctxPie = document.getElementById('pie-chart').getContext('2d');
+    window.myPie = new Chart(ctxPie, configPie);
     };

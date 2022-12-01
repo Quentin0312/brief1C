@@ -142,10 +142,11 @@ def upload_file(request):
     # Etape 2: Situation POST
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
-        file = request.FILES['file'] # Juste à partir de la le script peut se lancer ? Car pas besoin de save le fichiers csv juste l'enregistrer en pandas dataframe ?
+        file = request.FILES['file']
         
         # Debut "script" d'importation
         df = pd.read_csv(file)
+
         # Ici aplliquer fonction de nettoyage qui renvoie un dataframe à reutiliser juste après
         
         # Importation dans la BDD

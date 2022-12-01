@@ -147,14 +147,20 @@ def graphTCD(request):
     # print(rows)
 
     # Traitement, formatage pour chart js
+    # listeProduits = []
+    # for elt in rows:
+    #     i=1
+    #     for subelt in elt:
+    #         if i == 2 and subelt not in listeProduits:
+    #             listeProduits.append(subelt)
+    #         i+=1
+
     listeProduits = []
     for elt in rows:
-        i=1
-        for subelt in elt:
-            if i == 2 and subelt not in listeProduits:
-                listeProduits.append(subelt)
-            i+=1
-    # print(listeProduits)
+        if elt[1] not in listeProduits:
+            listeProduits.append(elt[1])
+
+    print(listeProduits)
 
     listePays = []
     for elt in rows:
@@ -162,21 +168,45 @@ def graphTCD(request):
             listePays.append(elt[0])
     print(listePays)
 
-    z = 1
+    # z = 1
+    # for pays in listePays:
+    #     if z == 1:
+    #         z += 1
+    #         listeData = []
+    #         for produit in listeProduits:
+    #             for elt in rows:
+    #                 if pays and produit in elt:
+    #                     listeData.append(elt[2])
+    # print(listeData)
+
+    # Attention mettre 0 et pas laisser vide si pas de correspondance car décalage sinon
+    # ATTENTION
+        # ATTENTION
+            # ATTENTION
+                # ATTENTION
+                    # ATTENTION
+    
+    dictionnaireData = {}
     for pays in listePays:
-        if z == 1:
-            z += 1
-            listeData = []
-            for produit in listeProduits:
-                for elt in rows:
-                    if pays and produit in elt:
-                        listeData.append(elt[2])
-    print(listeData)
+        print("itération")
+
+        listeData = []
+        for produit in listeProduits:
+            for elt in rows:
+                if pays in elt and produit in elt:
+                    listeData.append(elt[2])
+        dictionnaireData[pays] = listeData
+        listeData = []
+    # print(dictionnaireData)
+    
+    # print(len(dictionnaireData["United Kingdom"]))
+    # print(len(dictionnaireData["Germany"]))
 
 
     context={
         'labels' : listeProduits,
-        'dataTest' : listeData
+        'dicoData' : dictionnaireData,
+        'listePays': listePays 
     }
 
 

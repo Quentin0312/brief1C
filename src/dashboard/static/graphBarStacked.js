@@ -6,15 +6,21 @@ const data = {
   labels: labels,
   datasets: [
     {
-      label: 'Pays 1',
-      data: dataTest,
-      backgroundColor: '#696969',
+      label: listePays[0],
+      data: dicoData[listePays[0]],
+      backgroundColor: 'blue',
       stack: 'Stack 0'
     },
     {
-        label:'Pays 2',
-        data: [3,2,5],
-        backgroundColor: '#D3D3D3',
+        label: listePays[1],
+        data: dicoData[listePays[1]],
+        backgroundColor: 'red',
+        stack: 'Stack 0'
+    },
+    {
+        label: listePays[5],
+        data: dicoData[listePays[5]],
+        backgroundColor: 'green',
         stack: 'Stack 0'
     }
   ]
@@ -34,6 +40,9 @@ const config = {
       scales: {
         x: {
           stacked: true,
+          grid: {
+            offset: true
+          }
         },
         y: {
           stacked: true

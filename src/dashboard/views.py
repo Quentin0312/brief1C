@@ -164,33 +164,35 @@ def nettoyageDataframe(dataframe):
 
     return dataframe
 
-def importerProduits(dataframe0, engine):
+def importerProduits(df, engine):
     # ATTENTION => pas répétable : PK ! solutions=> try except ou algo manière 
     # déconseillé ? ou recup liste dans bdd et supprimer elt correspondant dans 
     # dataframe
 
-    # Suppresion columns ne concernant pas la table produits
-    # dataframe0.drop('nofacture', inplace=True, axis=1)
-    # dataframe0.drop('datefacturation', inplace=True, axis=1)
-    # dataframe0.drop('region', inplace=True, axis=1)
-    # Suppression des doublons car PK
-    dataframe0.drop_duplicates(subset=['codeproduit'],inplace=True)
+    produitDF = df.copy() #IMPORTANT vraie copie
+
+    # codeproduit => PK
+    produitDF.drop_duplicates(subset=['codeproduit'],inplace=True)
 
     # Importation dans table produits
-    dataframe0[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
+    produitDF[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
 
-def importerFactures(dataframe0,engine):
+def importerFactures(df,engine):
 
-    # Suppresion columns ne concernant pas la table Factures
-    # dataframe0.drop('codeproduit', inplace=True, axis=1)
-    # dataframe0.drop('description', inplace=True, axis=1)
-    # Suppression des doublons car PK
-    dataframe0.drop_duplicates(subset=['nofacture'],inplace=True)
+    factureDF = df.copy() #IMPORTANT vraie copie
 
+    # nofacture=> PK
+    factureDF.drop_duplicates(subset=['nofacture'],inplace=True)
 
     # Importation dans la table Factures
-    print(dataframe0.loc)
-    dataframe0[['nofacture','datefacturation','region']].to_sql('factures', con=engine, if_exists='append', index=False)
+    factureDF[['nofacture','datefacturation','region']].to_sql('factures', con=engine, if_exists='append', index=False)
+
+def importerContenir(df, engine):
+
+    contenirDF = df.copy() # IMPORTANT vrai copie
+
+    # Importation dans la table contenir
+    contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
 
 
 
@@ -261,15 +263,17 @@ def upload_file(request):
         # Importation dans la BDD
         engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
 
-        # Table produits
-        produitDF = df.copy()
-        importerProduits(dataframe0=produitDF, engine=engine)
+            # Table produits
+        importerProduits(df, engine)
 
-        # Table facture
-        factureDF = df.copy()
-        importerFactures(dataframe0 = factureDF, engine = engine)
+            # Table facture
+        importerFactures(df, engine)
+
+            # Table contenir
+        importerContenir(df, engine)
 
         return HttpResponse("C'est fait !")
+    
     # Etape 1
     else:
         form = UploadFileForm()

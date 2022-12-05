@@ -48,7 +48,6 @@ df = df.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'I
 # To date
 df["datefacturation"] = pd.to_datetime(df["datefacturation"])
 
-df.dropna(axis=0, inplace=True)
 
 # Envoi BDD-----------------------
 # 0- InvoiceNo
@@ -63,7 +62,7 @@ df.dropna(axis=0, inplace=True)
 # À envoyer BDD => Factures: 0-4-7 ; Produits => 1 ; Details => 3-0-1
 # for elt in df.loc:
 # ex: elt[1] => stockcode
-    
+
 
 #---------------------------------
 

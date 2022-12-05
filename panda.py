@@ -68,7 +68,8 @@ def allUniqueElementsIn1Colonne(dataFrame, colonne): # colonne => "entreGuilleme
 
     return liste
 
-# listePays = allUniqueElementsIn1Colonne("Country")
+# listePays = allUniqueElementsIn1Colonne(df,"Country")
+# print(listePays)
 
 # print(listePays)
 

@@ -8,10 +8,13 @@ from .models import Factures, Produits, Contenir
 from django.db import connections
 
 import pandas as pd
+import numpy as np
 
 
 # Fonctions -------------------------------------------
 def csvToBDD(dataframe):
+    
+    # Importation à chaques itérations
     iterations = 0
     for elt in dataframe.loc:
         iterations +=1
@@ -119,6 +122,36 @@ def selectSQLtop(top):
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
     return rows
 
+def nettoyageDataframe(dataframe):
+    #Suppression "CustomerID"
+    dataframe.drop('CustomerID', inplace=True, axis=1)
+    # --------------------------------
+
+    #Suppression doublons
+    dataframe.drop_duplicates(subset=['InvoiceNo','StockCode'],inplace=True)
+    # --------------------------------
+    
+    # Pays à supprimer
+    # Unspecified
+    dataframe.drop(dataframe[dataframe['Country'] == 'Unspecified'].index, inplace = True)
+    # European Community
+    dataframe.drop(dataframe[dataframe['Country'] == 'European Community'].index, inplace = True)
+    # Channel islands
+    dataframe.drop(dataframe[dataframe['Country'] == 'Channel Islands'].index, inplace = True)
+    # --------------------------------
+
+    # Suppression des avoirs
+    # len == 7
+    dataframe.drop(dataframe[dataframe['InvoiceNo'].str.len() == 7].index, inplace = True)
+    # Quantity < 0
+    dataframe.drop(dataframe[dataframe['Quantity'] <0].index, inplace = True)
+    # UnitPrice == 0
+    dataframe.drop(dataframe[dataframe['UnitPrice'] == 0].index, inplace = True)
+
+    # Description ??
+
+    return dataframe
+
 # Views -----------------------------------------------
 def mainDashboard(request):
 
@@ -170,6 +203,7 @@ def graphProduits(request):
     return render(request, "graphProduits.html", context)
 
 def upload_file(request):
+
     # Etape 2: Situation POST
     if request.method == 'POST':
         form = UploadFileForm(request.POST, request.FILES)
@@ -179,11 +213,13 @@ def upload_file(request):
         df = pd.read_csv(file)
 
         # Ici appliquer fonction de nettoyage qui renvoie un dataframe à reutiliser juste après
-        
+        df = nettoyageDataframe(df)
+
         # Importation dans la BDD
         csvToBDD(df)
 
         return HttpResponse("Nom du fichiers: "+str(df))
+    
     # Etape 1
     else:
         form = UploadFileForm()

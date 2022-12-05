@@ -7,6 +7,8 @@ from .forms import UploadFileForm, ParamForm
 from .models import Factures, Produits, Contenir
 from django.db import connections
 
+from sqlalchemy import create_engine
+
 import pandas as pd
 import numpy as np
 
@@ -150,6 +152,10 @@ def nettoyageDataframe(dataframe):
 
     # Description ??
 
+    # Suppression columns inutiles
+    dataframe.drop('Quantity', inplace=True, axis=1)
+    dataframe.drop('UnitPrice', inplace=True, axis=1)
+
     return dataframe
 
 # Views -----------------------------------------------
@@ -216,10 +222,19 @@ def upload_file(request):
         df = nettoyageDataframe(df)
 
         # Importation dans la BDD
-        csvToBDD(df)
+        engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
+        df = df.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'InvoiceDate' : 'datefacturation', 'Country' : 'region', 'Description' : 'description'})
+        
+        # Importation dans table produits
+        df.drop('nofacture', inplace=True, axis=1)
+        df.drop('datefacturation', inplace=True, axis=1)
+        df.drop('region', inplace=True, axis=1)
+        df.drop_duplicates(subset=['codeproduit'],inplace=True)
 
-        return HttpResponse("Nom du fichiers: "+str(df))
-    
+        df.to_sql('produits', con=engine, if_exists='append', index=False) #, index_label='codeproduit'
+        # csvToBDD(df)
+
+        return HttpResponse("C'est fait !")
     # Etape 1
     else:
         form = UploadFileForm()

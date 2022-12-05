@@ -36,6 +36,13 @@ df.drop(df[df['UnitPrice'] == 0].index, inplace = True)
 
 # Description ??
 
+# Suppression columns inutiles
+df.drop('Quantity', inplace=True, axis=1)
+df.drop('UnitPrice', inplace=True, axis=1)
+
+
+# Columns renomé
+df = df.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'InvoiceDate' : 'datefacturation', 'Country' : 'region', 'Description' : 'description'})
 
 # Envoi BDD-----------------------
 # 0- InvoiceNo
@@ -66,5 +73,6 @@ df.drop(df[df['UnitPrice'] == 0].index, inplace = True)
 #         break
 
 print(df.info())
+
 # test = df.loc[(df["Description"].str.len() < 6)]
 # print(test)

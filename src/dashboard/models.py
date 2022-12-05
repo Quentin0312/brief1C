@@ -13,6 +13,7 @@ class Factures(models.Model):
 
 class Produits(models.Model):
     codeproduit = models.CharField(primary_key=True, max_length=50)
+    description = models.CharField(max_length=200, blank=True, null=True)
 
     class Meta:
         managed = False
@@ -21,7 +22,6 @@ class Produits(models.Model):
 class Contenir(models.Model):
     nofacture = models.OneToOneField('Factures', models.DO_NOTHING, db_column='nofacture', primary_key=True)
     codeproduit = models.ForeignKey('Produits', models.DO_NOTHING, db_column='codeproduit')
-    qte = models.IntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

@@ -44,6 +44,12 @@ df.drop('UnitPrice', inplace=True, axis=1)
 # Columns renomé
 df = df.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'InvoiceDate' : 'datefacturation', 'Country' : 'region', 'Description' : 'description'})
 
+
+# To date
+df["datefacturation"] = pd.to_datetime(df["datefacturation"])
+
+df.dropna(axis=0, inplace=True)
+
 # Envoi BDD-----------------------
 # 0- InvoiceNo
 # 1- StockCode
@@ -74,5 +80,5 @@ df = df.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'I
 
 print(df.info())
 
-# test = df.loc[(df["Description"].str.len() < 6)]
+# test = df.loc[(df["description"].str.len() < 1)]
 # print(test)

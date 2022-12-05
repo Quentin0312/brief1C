@@ -14,6 +14,13 @@ import numpy as np
 
 
 # Fonctions -------------------------------------------
+def recupererListeProduits(rows):
+    listeProduits = []
+    for elt in rows:
+        if elt[1] not in listeProduits:
+            listeProduits.append(elt[1])
+    return listeProduits
+
 def csvToBDD(dataframe):
     
     # Importation à chaques itérations
@@ -42,13 +49,6 @@ def csvToBDD(dataframe):
             cursor.execute("INSERT INTO contenir(nofacture,codeproduit,qte) VALUES ( %s , %s , %s )",[elt[0], elt[1], elt[3].item()]) # .item() transforme numpy.int64 en int "classique" accépté par postgreSQL
         except:
             pass
-
-def recupererListeProduits(rows):
-    listeProduits = []
-    for elt in rows:
-        if elt[1] not in listeProduits:
-            listeProduits.append(elt[1])
-    return listeProduits
 
 def recupererListePays(rows):
     listePays = []
@@ -156,7 +156,44 @@ def nettoyageDataframe(dataframe):
     dataframe.drop('Quantity', inplace=True, axis=1)
     dataframe.drop('UnitPrice', inplace=True, axis=1)
 
+    # Rennomer les colonne
+    dataframe = dataframe.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'InvoiceDate' : 'datefacturation', 'Country' : 'region', 'Description' : 'description'})
+    
+    # To date
+    dataframe["datefacturation"] = pd.to_datetime(dataframe["datefacturation"])
+
     return dataframe
+
+def importerProduits(dataframe0, engine):
+    # ATTENTION => pas répétable : PK ! solutions=> try except ou algo manière 
+    # déconseillé ? ou recup liste dans bdd et supprimer elt correspondant dans 
+    # dataframe
+
+    # Suppresion columns ne concernant pas la table produits
+    # dataframe0.drop('nofacture', inplace=True, axis=1)
+    # dataframe0.drop('datefacturation', inplace=True, axis=1)
+    # dataframe0.drop('region', inplace=True, axis=1)
+    # Suppression des doublons car PK
+    dataframe0.drop_duplicates(subset=['codeproduit'],inplace=True)
+
+    # Importation dans table produits
+    dataframe0[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
+
+def importerFactures(dataframe0,engine):
+
+    # Suppresion columns ne concernant pas la table Factures
+    # dataframe0.drop('codeproduit', inplace=True, axis=1)
+    # dataframe0.drop('description', inplace=True, axis=1)
+    # Suppression des doublons car PK
+    dataframe0.drop_duplicates(subset=['nofacture'],inplace=True)
+
+
+    # Importation dans la table Factures
+    print(dataframe0.loc)
+    dataframe0[['nofacture','datefacturation','region']].to_sql('factures', con=engine, if_exists='append', index=False)
+
+
+
 
 # Views -----------------------------------------------
 def mainDashboard(request):
@@ -218,21 +255,19 @@ def upload_file(request):
         # Debut "script" d'importation
         df = pd.read_csv(file)
 
-        # Ici appliquer fonction de nettoyage qui renvoie un dataframe à reutiliser juste après
+        # Ici fonction de nettoyage
         df = nettoyageDataframe(df)
 
         # Importation dans la BDD
         engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
-        df = df.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'InvoiceDate' : 'datefacturation', 'Country' : 'region', 'Description' : 'description'})
-        
-        # Importation dans table produits
-        df.drop('nofacture', inplace=True, axis=1)
-        df.drop('datefacturation', inplace=True, axis=1)
-        df.drop('region', inplace=True, axis=1)
-        df.drop_duplicates(subset=['codeproduit'],inplace=True)
 
-        df.to_sql('produits', con=engine, if_exists='append', index=False) #, index_label='codeproduit'
-        # csvToBDD(df)
+        # Table produits
+        produitDF = df.copy()
+        importerProduits(dataframe0=produitDF, engine=engine)
+
+        # Table facture
+        factureDF = df.copy()
+        importerFactures(dataframe0 = factureDF, engine = engine)
 
         return HttpResponse("C'est fait !")
     # Etape 1

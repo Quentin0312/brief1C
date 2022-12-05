@@ -11,7 +11,8 @@ import pandas as pd
 import numpy as np
 import re
 
-df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
+# df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
+df = pd.read_csv('./ressources/data2011s2.csv', encoding = "ISO-8859-1")
 
 # Print en entier
 # print(df.to_string())
@@ -28,7 +29,7 @@ df = pd.read_csv('./ressources/data2010-2011s1.csv', encoding = "ISO-8859-1")
 # print(pd.options.display.max_rows) 
 
 # Info sur les champs du csv
-# print(df.info()) 
+# print(df.info())
 
 # Affiche True les elt doublons
 # print(str(df.duplicated()))
@@ -67,6 +68,7 @@ def allUniqueElementsIn1Colonne(dataFrame, colonne): # colonne => "entreGuilleme
             liste.append(elt)
 
     return liste
+
 
 # listePays = allUniqueElementsIn1Colonne(df,"Country")
 # print(listePays)
@@ -282,3 +284,70 @@ def verifFormatDateFinal(dataframe, colonne):
 # print(type(df["InvoiceDate"][1]))
 
 # ------------------------------------------
+from sqlalchemy import create_engine
+
+def nettoyageDataframe(dataframe):
+    avantNettoyage = len(dataframe)
+
+    #Suppression "CustomerID"
+    dataframe.drop('CustomerID', inplace=True, axis=1)
+    # --------------------------------
+
+    #Suppression doublons
+    dataframe.drop_duplicates(subset=['InvoiceNo','StockCode'],inplace=True)
+    # --------------------------------
+    
+    # Pays à supprimer
+    # Unspecified
+    dataframe.drop(dataframe[dataframe['Country'] == 'Unspecified'].index, inplace = True)
+    # --------------------------------
+
+    # Suppression des avoirs
+    # len == 7
+    dataframe.drop(dataframe[dataframe['InvoiceNo'].str.len() == 7].index, inplace = True)
+    # Quantity < 0
+    dataframe.drop(dataframe[dataframe['Quantity'] <0].index, inplace = True)
+    # UnitPrice == 0
+    dataframe.drop(dataframe[dataframe['UnitPrice'] == 0].index, inplace = True)
+
+    # Description ??
+
+    # Suppression columns inutiles
+    dataframe.drop('Quantity', inplace=True, axis=1)
+    dataframe.drop('UnitPrice', inplace=True, axis=1)
+
+    # Rennomer les colonne
+    dataframe = dataframe.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'InvoiceDate' : 'datefacturation', 'Country' : 'region', 'Description' : 'description'})
+    
+    # To date
+    dataframe["datefacturation"] = pd.to_datetime(dataframe["datefacturation"])
+
+    # Feedback data perdues
+    apresNettoyage = len(dataframe)
+    reste = avantNettoyage - apresNettoyage
+    pourcentageDataPerdues = reste / avantNettoyage *100
+    print(pourcentageDataPerdues)
+    return dataframe
+
+df = nettoyageDataframe(df)
+
+# Drop duplicate interne à faire
+
+engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
+queryTest = pd.read_sql_query('''SELECT * FROM produits''', engine)
+dataframeTest = pd.DataFrame(queryTest, columns=['codeproduit','description'])
+# print(dataframeTest)
+dataFrameTest1 = df[['codeproduit','description']]
+
+concatenationDFS = pd.concat([dataFrameTest1, dataframeTest])
+
+
+avantconcat = len(concatenationDFS)
+# Suppresion des doublons
+concatenationDFS.drop_duplicates(subset=['codeproduit'], inplace=True, keep=False)
+
+apresconcat = len(concatenationDFS)
+
+result = avantconcat - apresconcat
+print(result)
+print(len(concatenationDFS))

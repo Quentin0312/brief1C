@@ -125,6 +125,8 @@ def selectSQLtop(top):
     return rows
 
 def nettoyageDataframe(dataframe):
+    avantNettoyage = len(dataframe)
+
     #Suppression "CustomerID"
     dataframe.drop('CustomerID', inplace=True, axis=1)
     # --------------------------------
@@ -136,10 +138,6 @@ def nettoyageDataframe(dataframe):
     # Pays à supprimer
     # Unspecified
     dataframe.drop(dataframe[dataframe['Country'] == 'Unspecified'].index, inplace = True)
-    # European Community
-    dataframe.drop(dataframe[dataframe['Country'] == 'European Community'].index, inplace = True)
-    # Channel islands
-    dataframe.drop(dataframe[dataframe['Country'] == 'Channel Islands'].index, inplace = True)
     # --------------------------------
 
     # Suppression des avoirs
@@ -162,17 +160,33 @@ def nettoyageDataframe(dataframe):
     # To date
     dataframe["datefacturation"] = pd.to_datetime(dataframe["datefacturation"])
 
+    # Feedback data perdues
+    apresNettoyage = len(dataframe)
+    reste = avantNettoyage - apresNettoyage
+    pourcentageDataPerdues = reste / avantNettoyage *100
+    print(pourcentageDataPerdues)
     return dataframe
 
 def importerProduits(df, engine):
-    # ATTENTION => pas répétable : PK ! solutions=> try except ou algo manière 
-    # déconseillé ? ou recup liste dans bdd et supprimer elt correspondant dans 
-    # dataframe
 
+    # Modification à effectué sur copie pour pas influencer les autres imports
     produitDF = df.copy() #IMPORTANT vraie copie
 
-    # codeproduit => PK
+    # codeproduit => PK : Suppression des doublons dans le dataframe
     produitDF.drop_duplicates(subset=['codeproduit'],inplace=True)
+
+    # Vérification des data déjà existantes dans la BDD
+        # Création dataframe à partir SQL query
+    querySQL = pd.read_sql_query('''SELECT * FROM produits''', engine)
+    dataframeSQL = pd.DataFrame(querySQL, columns=['codeproduit','description'])
+
+        # Concaténation des dataframes
+    dataframeProduit = produitDF[['codeproduit','description']]
+    dataframeConcatenee = pd.concat([dataframeSQL, dataframeProduit])
+
+        # Suppression des doublons
+    
+
 
     # Importation dans table produits
     produitDF[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
@@ -194,8 +208,18 @@ def importerContenir(df, engine):
     # Importation dans la table contenir
     contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
 
+def importer(df):
+    
+    engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
 
+    # Table produits
+    importerProduits(df, engine)
 
+    # Table facture
+    importerFactures(df, engine)
+
+    # Table contenir
+    importerContenir(df, engine)
 
 # Views -----------------------------------------------
 def mainDashboard(request):
@@ -257,20 +281,15 @@ def upload_file(request):
         # Debut "script" d'importation
         df = pd.read_csv(file)
 
-        # Ici fonction de nettoyage
+        # Nettoyage
         df = nettoyageDataframe(df)
 
+        # Nettoyage doublons selon anciennes data dans BDD
+
+
+
         # Importation dans la BDD
-        engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
-
-            # Table produits
-        importerProduits(df, engine)
-
-            # Table facture
-        importerFactures(df, engine)
-
-            # Table contenir
-        importerContenir(df, engine)
+        importer(df)
 
         return HttpResponse("C'est fait !")
     

@@ -31,7 +31,8 @@ class Contenir(models.Model):
 class Paramgraph(models.Model):
     auto_increment_id = models.AutoField(primary_key=True)
     nomgraph = models.CharField(max_length=50)
-    param1 = models.IntegerField(blank=True, null=True)
+    param1 = models.IntegerField()
+    param2 = models.CharField(max_length=50, blank=True, null=True)
 
     class Meta:
         db_table = 'paramgraph'

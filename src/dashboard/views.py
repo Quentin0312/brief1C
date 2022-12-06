@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect
 from django.template import loader
 
-from .forms import UploadFileForm, ParamForm
+from .forms import UploadFileForm, ParamForm, graph3Form
 
 from .models import Factures, Produits, Contenir
 from django.db import connections
@@ -109,6 +109,7 @@ def recupererTopX(nomGraph):
     try:
         topSQL = "SELECT LAST_VALUE(param1) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='"+ nomGraph +"' LIMIT 1"
         top = selectSQL(topSQL)
+        print(top)
         if top == []:
             top = 10
         else:
@@ -414,5 +415,49 @@ def graphTCD(request):
 
     return render(request, "graphTCD.html", context)
 
+def graph3(request):
 
+    # Situation entrée valeur top
+    if request.method == "POST":
+        form = graph3Form(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('graph3')
+
+    # Recupérer top
+    topCible = recupererTopX("graph3ProduitsPays")
+
+    # Récupérer paysCible
+    try:
+        SQL = "SELECT LAST_VALUE(param2) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='graph3ProduitsPays' LIMIT 1"
+        query = selectSQL(SQL)
+        if query == []:
+            paysCible = 'United Kingdom'
+        else:
+            for elt in query:
+                for subelt in elt:
+                    paysCible = subelt
+    except:
+        paysCible = 'United Kingdom'
+
+    # Requete SQL
+    requeteSQL = "SELECT contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture WHERE region = '" + paysCible + "' GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT " + str(topCible)
+    cursor = connections['default'].cursor()
+    cursor.execute(requeteSQL)
+    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
+
+    # Rows to labels et data lists
+    valeurs, labels = rowToVariable(rows)
+
+    # Context
+    form = graph3Form
+    context = {
+        'labels' : labels,
+        'data' : valeurs,
+        'form' : form,
+        'pays1' : paysCible,
+        'top1' : topCible
+    }
+
+    return render(request, "graph3.html", context)
     

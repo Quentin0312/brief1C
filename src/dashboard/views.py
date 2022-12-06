@@ -180,16 +180,14 @@ def importerProduits(df, engine):
     # codeproduit => PK : Suppression des doublons dans le dataframe
     produitDF.drop_duplicates(subset=['codeproduit'], inplace=True)
 
-    # Si import initial
+    # Situtation import initial
     querySQLtest = pd.read_sql_query('''SELECT * FROM produits''', engine)
     if "Empty DataFrame" in str(querySQLtest):
-        print("Import initial: ")
+        print("Import initial produits")
         produitDF[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
+    # Situation import supplémentaire
     else:
-        print('Pas import initial')
-        pass
-
-    # Vérification des data déjà existantes dans la BDD
+        print('Import suppl produits')
         
         # Création dataframe à partir SQL query
         querySQL = pd.read_sql_query('''SELECT * FROM produits''', engine)
@@ -207,39 +205,41 @@ def importerProduits(df, engine):
         # Importation dans BDD
         dataframeConcatenee.to_sql('produits', con=engine, if_exists='append', index=False)
 
-    # Importation dans table produits
-    # produitDF[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
-
-    # SECOND TEST IMPORT SUPPL
-    # dfCopy = df.copy()
-    # sqlQuerydf
-    # queryTest = pd.read_sql_query('''SELECT * FROM produits''', engine)
-    # dataframeTest = pd.DataFrame(queryTest, columns=['codeproduit','description'])
-
-
-
-    # dataFrameTest1 = dfCopy[['codeproduit','description']]
-    # dataFrameTest1.drop_duplicates(subset=['codeproduit'], inplace=True, keep=False)
-
-
-    # concatenationDFS = pd.concat([dataFrameTest1, dataframeTest])
-
-
-    # Suppresion des doublons
-    # concatenationDFS.drop_duplicates(subset=['codeproduit'], inplace=True, keep=False)
-
-    # concatenationDFS[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
-
-
 def importerFactures(df,engine):
 
+    # Modification à effectué sur copie pour pas influencer les autres imports
     factureDF = df.copy() #IMPORTANT vraie copie
 
-    # nofacture=> PK
+    # nofacture => PK donc suppression des donblons en amont necessaire
     factureDF.drop_duplicates(subset=['nofacture'],inplace=True)
 
-    # Importation dans la table Factures
-    factureDF[['nofacture','datefacturation','region']].to_sql('factures', con=engine, if_exists='append', index=False)
+    # Situtation import initial
+    querySQLtest = pd.read_sql_query('''SELECT * FROM factures''', engine)
+    if "Empty DataFrame" in str(querySQLtest):
+        print("Import initial factures")
+
+        # Importation dans la table Factures
+        factureDF[['nofacture','datefacturation','region']].to_sql('factures', con=engine, if_exists='append', index=False)
+
+    # Situation import supplémentaire
+    else:
+        print('Import suppl factures ')
+
+        # Création dataframe à partir SQL query
+        querySQL = pd.read_sql_query('''SELECT * FROM factures''', engine)
+
+        dataframeSQL = pd.DataFrame(querySQL, columns=['nofacture','datefacturation','region'])
+        dataframeSQLcopie = dataframeSQL.copy()
+        dataframeFacture = factureDF[['nofacture','datefacturation','region']]
+
+        # Concatenation
+        dataframeConcatenee = pd.concat([dataframeFacture, dataframeSQL, dataframeSQLcopie])
+
+        # Suppression des doublons
+        dataframeConcatenee.drop_duplicates(subset=['nofacture'], inplace=True, keep=False)
+
+        # Importation dans BDD
+        dataframeConcatenee.to_sql('factures', con=engine, if_exists='append', index=False)
 
 def importerContenir(df, engine):
 
@@ -255,7 +255,7 @@ def importer(df):
     importerProduits(df, engine)
 
     # Table facture
-    # importerFactures(df, engine)
+    importerFactures(df, engine)
 
     # Table contenir
     # importerContenir(df, engine)

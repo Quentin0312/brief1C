@@ -178,13 +178,14 @@ def importerProduits(df, engine):
     produitDF['codeproduit'] = produitDF['codeproduit'].str.upper()
 
     # codeproduit => PK : Suppression des doublons dans le dataframe
-    produitDF.drop_duplicates(subset=['codeproduit'], inplace=True)
+    produitDF.drop_duplicates(subset=['codeproduit','nofacture'], inplace=True)
 
     # Situtation import initial
     querySQLtest = pd.read_sql_query('''SELECT * FROM produits''', engine)
     if "Empty DataFrame" in str(querySQLtest):
         print("Import initial produits")
         produitDF[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
+    
     # Situation import supplémentaire
     else:
         print('Import suppl produits')
@@ -243,7 +244,37 @@ def importerFactures(df,engine):
 
 def importerContenir(df, engine):
 
+    # Modification à effectué sur copie pour pas influencer les autres imports
     contenirDF = df.copy() # IMPORTANT vrai copie
+
+    # uppercase les codeproduits pour éviter la correspondance de la FK dans la BDD
+    contenirDF['codeproduit'] = contenirDF['codeproduit'].str.upper()
+
+    # Situation import initial
+    querySQLtest = pd.read_sql_query('''SELECT * FROM contenir''', engine)
+    if "Empty DataFrame" in str(querySQLtest):
+        print("Import initial contenir")
+        contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
+    
+    # Situtation import suppl
+    else:
+        print("Import suppl contenir")
+
+        # Création dataframe à partir SQL query
+        querySQL = pd.read_sql_query('''SELECT * FROM contenir''', engine)
+
+        dataframeSQL = pd.DataFrame(querySQL, columns=['nofacture','codeproduit'])
+        dataframeSQLcopie = dataframeSQL.copy()
+        dataframeContenir = contenirDF[['nofacture','codeproduit']]
+
+        # Concatenation
+        dataframeConcatenee = pd.concat([dataframeContenir, dataframeSQL, dataframeSQLcopie])
+
+        # Suppression des doublons
+        dataframeConcatenee.drop_duplicates(subset=['nofacture','codeproduit'], inplace=True, keep=False)
+
+        # Importation dans BDD
+        dataframeConcatenee.to_sql('contenir', con=engine, if_exists='append', index=False)
 
     # Importation dans la table contenir
     contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
@@ -258,7 +289,7 @@ def importer(df):
     importerFactures(df, engine)
 
     # Table contenir
-    # importerContenir(df, engine)
+    importerContenir(df, engine)
 
 # Views -----------------------------------------------
 def mainDashboard(request):

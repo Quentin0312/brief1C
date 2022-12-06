@@ -119,8 +119,23 @@ def recupererTopX(nomGraph):
         top = 10
     return top
 
-def selectSQLtop(top):
+def selectSQLproduit(top):
+    # Si valeur vide entrée
+    if top == None:
+        top = 10
+
     requeteSQL = "SELECT codeproduit, COUNT(*) AS vente FROM contenir GROUP BY codeproduit ORDER BY vente DESC LIMIT "+str(top)
+    cursor = connections['default'].cursor()
+    cursor.execute(requeteSQL)
+    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
+    return rows
+
+def selectSQLpays(top):
+    # Si valeur vide entrée
+    if top == None:
+        top = 10
+
+    requeteSQL = "SELECT factures.region, COUNT(*) AS vente FROM factures INNER JOIN contenir ON factures.nofacture = contenir.nofacture GROUP BY factures.region ORDER BY vente DESC LIMIT "+str(top)
     cursor = connections['default'].cursor()
     cursor.execute(requeteSQL)
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
@@ -298,17 +313,28 @@ def mainDashboard(request):
 
 def graphPays(request):
 
-    # Requette SQL
-        # TOP 5 
-    rows = selectSQL("SELECT factures.region, COUNT(*) AS vente FROM factures INNER JOIN contenir ON factures.nofacture = contenir.nofacture GROUP BY factures.region ORDER BY vente DESC LIMIT 5")
+    # Situation entrée valeur top
+    if request.method == "POST":
+        form = ParamForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect('graphPays')
+    
+    # Récuperer le top X
+    top = recupererTopX("pays")
 
-    # Récupération datasets pour chart JS
+    # Requette SQL
+    rows = selectSQLpays(top)
+
+    # Transformation rows en datasets compatible pour chart JS
     valeurs, labels = rowToVariable(rows)
 
     # Context
+    form = ParamForm
     context = {
         'labels' : labels,
         'data' : valeurs,
+        'form' : form
     }
 
     return render(request, "graphPays.html", context)
@@ -326,7 +352,7 @@ def graphProduits(request):
     top = recupererTopX("produits")
 
     # Requete SQL pour récuperer datasets, nécessite top x
-    rows = selectSQLtop(top)
+    rows = selectSQLproduit(top)
 
     # Transformation rows en datasets compatible pour chart JS
     valeurs, labels = rowToVariable(rows)

@@ -12,6 +12,8 @@ from sqlalchemy import create_engine
 import pandas as pd
 import numpy as np
 
+import os
+
 
 # Fonctions -------------------------------------------
 def recupererListeProduits(rows):
@@ -172,24 +174,62 @@ def importerProduits(df, engine):
     # Modification à effectué sur copie pour pas influencer les autres imports
     produitDF = df.copy() #IMPORTANT vraie copie
 
+    # uppercase les codeproduits pour éviter les doublons apres drop_duplicates (ex: 8462a et 8462A)
+    produitDF['codeproduit'] = produitDF['codeproduit'].str.upper()
+
     # codeproduit => PK : Suppression des doublons dans le dataframe
-    produitDF.drop_duplicates(subset=['codeproduit'],inplace=True)
+    produitDF.drop_duplicates(subset=['codeproduit'], inplace=True)
+
+    # Si import initial
+    querySQLtest = pd.read_sql_query('''SELECT * FROM produits''', engine)
+    if "Empty DataFrame" in str(querySQLtest):
+        print("Import initial: ")
+        produitDF[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
+    else:
+        print('Pas import initial')
+        pass
 
     # Vérification des data déjà existantes dans la BDD
+        
         # Création dataframe à partir SQL query
-    querySQL = pd.read_sql_query('''SELECT * FROM produits''', engine)
-    dataframeSQL = pd.DataFrame(querySQL, columns=['codeproduit','description'])
+        querySQL = pd.read_sql_query('''SELECT * FROM produits''', engine)
 
-        # Concaténation des dataframes
-    dataframeProduit = produitDF[['codeproduit','description']]
-    dataframeConcatenee = pd.concat([dataframeSQL, dataframeProduit])
+        dataframeSQL = pd.DataFrame(querySQL, columns=['codeproduit','description'])
+        dataframeSQLcopie = dataframeSQL.copy()
+        dataframeProduit = produitDF[['codeproduit','description']]
+        
+        # Concatenation
+        dataframeConcatenee = pd.concat([dataframeProduit, dataframeSQL, dataframeSQLcopie])
 
         # Suppression des doublons
-    
+        dataframeConcatenee.drop_duplicates(subset=['codeproduit'], inplace=True, keep=False)
 
+        # Importation dans BDD
+        dataframeConcatenee.to_sql('produits', con=engine, if_exists='append', index=False)
 
     # Importation dans table produits
-    produitDF[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
+    # produitDF[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
+
+    # SECOND TEST IMPORT SUPPL
+    # dfCopy = df.copy()
+    # sqlQuerydf
+    # queryTest = pd.read_sql_query('''SELECT * FROM produits''', engine)
+    # dataframeTest = pd.DataFrame(queryTest, columns=['codeproduit','description'])
+
+
+
+    # dataFrameTest1 = dfCopy[['codeproduit','description']]
+    # dataFrameTest1.drop_duplicates(subset=['codeproduit'], inplace=True, keep=False)
+
+
+    # concatenationDFS = pd.concat([dataFrameTest1, dataframeTest])
+
+
+    # Suppresion des doublons
+    # concatenationDFS.drop_duplicates(subset=['codeproduit'], inplace=True, keep=False)
+
+    # concatenationDFS[['codeproduit','description']].to_sql('produits', con=engine, if_exists='append', index=False)
+
 
 def importerFactures(df,engine):
 
@@ -209,17 +249,16 @@ def importerContenir(df, engine):
     contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
 
 def importer(df):
-    
     engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
 
     # Table produits
     importerProduits(df, engine)
 
     # Table facture
-    importerFactures(df, engine)
+    # importerFactures(df, engine)
 
     # Table contenir
-    importerContenir(df, engine)
+    # importerContenir(df, engine)
 
 # Views -----------------------------------------------
 def mainDashboard(request):
@@ -279,7 +318,8 @@ def upload_file(request):
         file = request.FILES['file']
         
         # Debut "script" d'importation
-        df = pd.read_csv(file)
+        print(type(file))
+        df = pd.read_csv(file, encoding='ISO-8859-1')
 
         # Nettoyage
         df = nettoyageDataframe(df)

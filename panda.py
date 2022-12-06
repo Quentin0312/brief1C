@@ -334,6 +334,7 @@ df = nettoyageDataframe(df)
 # Drop duplicate interne à faire
 
 engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
+
 queryTest = pd.read_sql_query('''SELECT * FROM produits''', engine)
 dataframeTest = pd.DataFrame(queryTest, columns=['codeproduit','description'])
 # print(dataframeTest)
@@ -351,3 +352,4 @@ apresconcat = len(concatenationDFS)
 result = avantconcat - apresconcat
 print(result)
 print(len(concatenationDFS))
+

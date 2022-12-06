@@ -133,6 +133,9 @@ def nettoyageDataframe(dataframe):
     dataframe.drop('CustomerID', inplace=True, axis=1)
     # --------------------------------
 
+    # uppercase les codeproduits pour éviter la correspondance de la FK dans la BDD
+    dataframe['StockCode'] = dataframe['StockCode'].str.upper()
+
     #Suppression doublons
     dataframe.drop_duplicates(subset=['InvoiceNo','StockCode'],inplace=True)
     # --------------------------------
@@ -175,10 +178,10 @@ def importerProduits(df, engine):
     produitDF = df.copy() #IMPORTANT vraie copie
 
     # uppercase les codeproduits pour éviter les doublons apres drop_duplicates (ex: 8462a et 8462A)
-    produitDF['codeproduit'] = produitDF['codeproduit'].str.upper()
+    # produitDF['codeproduit'] = produitDF['codeproduit'].str.upper()
 
     # codeproduit => PK : Suppression des doublons dans le dataframe
-    produitDF.drop_duplicates(subset=['codeproduit','nofacture'], inplace=True)
+    produitDF.drop_duplicates(subset=['codeproduit'], inplace=True)
 
     # Situtation import initial
     querySQLtest = pd.read_sql_query('''SELECT * FROM produits''', engine)
@@ -247,13 +250,13 @@ def importerContenir(df, engine):
     # Modification à effectué sur copie pour pas influencer les autres imports
     contenirDF = df.copy() # IMPORTANT vrai copie
 
-    # uppercase les codeproduits pour éviter la correspondance de la FK dans la BDD
-    contenirDF['codeproduit'] = contenirDF['codeproduit'].str.upper()
+    # contenirDF.drop_duplicates(subset=['codeproduit','nofacture'], inplace=True)
 
     # Situation import initial
     querySQLtest = pd.read_sql_query('''SELECT * FROM contenir''', engine)
     if "Empty DataFrame" in str(querySQLtest):
         print("Import initial contenir")
+        contenirDF.to_csv('testContenirDF.csv')
         contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
     
     # Situtation import suppl
@@ -276,8 +279,8 @@ def importerContenir(df, engine):
         # Importation dans BDD
         dataframeConcatenee.to_sql('contenir', con=engine, if_exists='append', index=False)
 
-    # Importation dans la table contenir
-    contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
+        # Importation dans la table contenir
+        contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
 
 def importer(df):
     engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')

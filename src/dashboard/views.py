@@ -256,7 +256,6 @@ def importerContenir(df, engine):
     querySQLtest = pd.read_sql_query('''SELECT * FROM contenir''', engine)
     if "Empty DataFrame" in str(querySQLtest):
         print("Import initial contenir")
-        contenirDF.to_csv('testContenirDF.csv')
         contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
     
     # Situtation import suppl
@@ -280,7 +279,7 @@ def importerContenir(df, engine):
         dataframeConcatenee.to_sql('contenir', con=engine, if_exists='append', index=False)
 
         # Importation dans la table contenir
-        contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
+        # contenirDF[['nofacture','codeproduit']].to_sql('contenir', con=engine, if_exists='append', index=False)
 
 def importer(df):
     engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')

@@ -63,9 +63,14 @@
         <label for="id_param1">Top  :</label>
         <input type="number" name="param1" id="id_param1">
 
-    <!-- Entrée valeur Pays -->
+    <!-- Entrée valeur Produit -->
         <label for="id_param2">Produits:</label>
-        <input type="text" name="param2" maxlength="50" id="id_param2">
+        <input list="listeProduits" name="param2" maxlength="50" id="id_param2">
+        <datalist id="listeProduits">
+            {% for elt in listeProduits %}
+            <option value="{{ elt }}">
+            {% endfor %}
+        </datalist>
         <input type="submit" name="test" value="voir">
     </p>
 </form>

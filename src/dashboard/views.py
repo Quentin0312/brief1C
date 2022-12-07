@@ -362,6 +362,33 @@ def produireLabelsEtDataGraph3(nomGraph, noGraph):
     
     return valeurs, labels, topCible, paramCible
 
+def recupererListePays():
+    # Requete SQL
+    rows = selectSQL("SELECT region FROM factures GROUP BY region ORDER BY region ASC")
+    
+    # Transforme tuple dans liste à liste normal
+    listePays = []
+    for elt in rows:
+        for subelt in elt:
+            eltModifie = subelt.replace(",","")
+            listePays.append(eltModifie)
+
+    return listePays
+
+def recupererListeProduits():
+
+    # Requete SQL
+    rows = selectSQL("SELECT codeproduit FROM produits GROUP BY codeproduit ORDER BY codeproduit ASC")    
+    
+    # Transforme tuple dans liste à liste normal
+    listeProduits = []
+    for elt in rows:
+        for subelt in elt:
+            eltModifie = subelt.replace(",","")
+            listeProduits.append(eltModifie)
+
+    return listeProduits
+
 # Views -----------------------------------------------
 def mainDashboard(request):
 
@@ -486,16 +513,10 @@ def graph3(request):
     valeurs2, labels2, topCible2, paramCible2 = produireLabelsEtDataGraph3("graph3PaysProduits", 2) 
 
     # Récup la liste des pays pour l'input list dans HTML
-    # Requete SQL
-    rows = selectSQL("SELECT region FROM factures GROUP BY region ORDER BY region ASC")
-    listePays = []
-    for elt in rows:
-        for subelt in elt:
-            eltModifie = subelt.replace(",","")
-            listePays.append(eltModifie)
+    listePays = recupererListePays() 
 
-    print(listePays)
-    print(type(listePays))
+    # Récup liste produits pour l'input list dans HTML
+    listeProduits = recupererListeProduits()
 
 
     # Context
@@ -509,7 +530,9 @@ def graph3(request):
         'data1' : valeurs1,
         'pays1' : paramCible1,
         'top1' : topCible1,
+        # Pour list input
         'listePays' : listePays,
+        'listeProduits' : listeProduits,
 
         # Graph 2 Top pays par produits
         'labels2' : labels2,

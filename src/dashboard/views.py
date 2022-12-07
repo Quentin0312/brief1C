@@ -479,12 +479,24 @@ def graph3(request):
             form.save()
             return HttpResponseRedirect('graph3')
 
-
     # Données graph 1 Top produits par pays
     valeurs1, labels1, topCible1, paramCible1 = produireLabelsEtDataGraph3("graph3ProduitsPays", 1)
     
     # Données graph 2 Top pays par praoduits
     valeurs2, labels2, topCible2, paramCible2 = produireLabelsEtDataGraph3("graph3PaysProduits", 2) 
+
+    # Récup la liste des pays pour l'input list dans HTML
+    # Requete SQL
+    rows = selectSQL("SELECT region FROM factures GROUP BY region ORDER BY region ASC")
+    listePays = []
+    for elt in rows:
+        for subelt in elt:
+            eltModifie = subelt.replace(",","")
+            listePays.append(eltModifie)
+
+    print(listePays)
+    print(type(listePays))
+
 
     # Context
     form = graph3Form
@@ -497,6 +509,7 @@ def graph3(request):
         'data1' : valeurs1,
         'pays1' : paramCible1,
         'top1' : topCible1,
+        'listePays' : listePays,
 
         # Graph 2 Top pays par produits
         'labels2' : labels2,

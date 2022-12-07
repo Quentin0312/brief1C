@@ -23,7 +23,12 @@
 
     <!-- Entrée valeur Pays -->
         <label for="id_param2">Pays:</label>
-        <input type="text" name="param2" maxlength="50" id="id_param2">
+        <input list="listePays" name="param2" maxlength="50" id="id_param2">
+        <datalist id="listePays">
+            {% for elt in listePays %}
+            <option value="{{ elt }}">
+            {% endfor %}
+        </datalist>
         <input type="submit" name="test" value="voir">
     </p>
 </form>

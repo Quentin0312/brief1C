@@ -16,7 +16,7 @@ import os
 
 
 # Fonctions -------------------------------------------
-def recupererListeProduits(rows):
+def recupererListeProduitsTCD(rows):
     listeProduits = []
     for elt in rows:
         if elt[1] not in listeProduits:
@@ -52,7 +52,7 @@ def csvToBDD(dataframe):
         except:
             pass
 
-def recupererListePays(rows):
+def recupererListePaysTCD(rows):
     listePays = []
     for elt in rows:
         if elt[0] not in listePays:
@@ -478,13 +478,13 @@ def upload_file(request):
 def graphTCD(request):
 
     # Requette SQL
-    rows = selectSQL('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT 100')
+    rows = selectSQL('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT 1000')
 
     # Récuperer la liste des produits
-    listeProduits = recupererListeProduits(rows)
+    listeProduits = recupererListeProduitsTCD(rows)
 
     # Récuperer la liste des pays
-    listePays = recupererListePays(rows)
+    listePays = recupererListePaysTCD(rows)
 
     # Produit datasets pour chart JS
     dictionnaireData = produitGraphDataset(listePays,listeProduits,rows)

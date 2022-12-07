@@ -396,7 +396,7 @@ def upload_file(request):
 def graphTCD(request):
 
     # Requette SQL
-    rows = selectSQL('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC')
+    rows = selectSQL('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT 100')
 
     # Récuperer la liste des produits
     listeProduits = recupererListeProduits(rows)

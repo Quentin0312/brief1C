@@ -307,6 +307,61 @@ def importer(df):
     # Table contenir
     importerContenir(df, engine)
 
+def recupererParam2(nomGraph):
+    try:
+        SQL = "SELECT LAST_VALUE(param2) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='"+nomGraph+"' LIMIT 1"
+        query = selectSQL(SQL)
+
+        if query == [] and nomGraph == "graph3ProduitsPays":
+            paramCible = 'United Kingdom'
+        elif query == [] and nomGraph == "graph3PaysProduits":
+            paramCible = '85123A'
+        else:
+            for elt in query:
+                for subelt in elt:
+                    paramCible = subelt
+    except:
+        if nomGraph == 'graph3ProduitsPays':
+            paramCible = 'United Kingdom'
+        else:
+            paramCible = '85123A'
+    return paramCible
+
+def requeteSQLgraph3_1(paysCible,topCible):
+    requeteSQL = "SELECT contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture WHERE region = '" + paysCible + "' GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT " + str(topCible)
+    cursor = connections['default'].cursor()
+    cursor.execute(requeteSQL)
+    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
+    return rows
+
+def requeteSQLgraph3_2(produitCible,topCible):
+    requeteSQL = "SELECT factures.region, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture WHERE codeproduit = '" + produitCible + "' GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT " + str(topCible)
+    cursor = connections['default'].cursor()
+    cursor.execute(requeteSQL)
+    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
+    return rows
+
+def produireLabelsEtDataGraph3(nomGraph, noGraph):
+
+    # Recupérer top
+    topCible = recupererTopX(nomGraph)
+
+    # Récupérer paysCible
+    paramCible = recupererParam2(nomGraph)
+
+    # Requete SQL si graph 1
+    if noGraph == 1:
+        rows = requeteSQLgraph3_1(paramCible, topCible)
+    # Requete SQL si graph 2
+    elif noGraph == 2:
+        rows = requeteSQLgraph3_2(paramCible, topCible)
+
+
+    # Rows to labels et data lists
+    valeurs, labels = rowToVariable(rows)
+    
+    return valeurs, labels, topCible, paramCible
+
 # Views -----------------------------------------------
 def mainDashboard(request):
 
@@ -424,39 +479,30 @@ def graph3(request):
             form.save()
             return HttpResponseRedirect('graph3')
 
-    # Recupérer top
-    topCible = recupererTopX("graph3ProduitsPays")
 
-    # Récupérer paysCible
-    try:
-        SQL = "SELECT LAST_VALUE(param2) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='graph3ProduitsPays' LIMIT 1"
-        query = selectSQL(SQL)
-        if query == []:
-            paysCible = 'United Kingdom'
-        else:
-            for elt in query:
-                for subelt in elt:
-                    paysCible = subelt
-    except:
-        paysCible = 'United Kingdom'
-
-    # Requete SQL
-    requeteSQL = "SELECT contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture WHERE region = '" + paysCible + "' GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT " + str(topCible)
-    cursor = connections['default'].cursor()
-    cursor.execute(requeteSQL)
-    rows = cursor.fetchall() # Contient ce que le SELECT renvoie
-
-    # Rows to labels et data lists
-    valeurs, labels = rowToVariable(rows)
+    # Données graph 1 Top produits par pays
+    valeurs1, labels1, topCible1, paramCible1 = produireLabelsEtDataGraph3("graph3ProduitsPays", 1)
+    
+    # Données graph 2 Top pays par praoduits
+    valeurs2, labels2, topCible2, paramCible2 = produireLabelsEtDataGraph3("graph3PaysProduits", 2) 
 
     # Context
     form = graph3Form
     context = {
-        'labels' : labels,
-        'data' : valeurs,
+        # Form
         'form' : form,
-        'pays1' : paysCible,
-        'top1' : topCible
+
+        # Graph 1 Top produits par pays
+        'labels1' : labels1,
+        'data1' : valeurs1,
+        'pays1' : paramCible1,
+        'top1' : topCible1,
+
+        # Graph 2 Top pays par produits
+        'labels2' : labels2,
+        'data2' : valeurs2,
+        'top2' : topCible2,
+        'produits2' : paramCible2
     }
 
     return render(request, "graph3.html", context)

@@ -1,3 +1,4 @@
+// Graph histogramme 1
 const configBar = {
     type: 'bar',
     data: {
@@ -17,7 +18,7 @@ const configBar = {
         responsive: true
     }
     };
-
+// Graph camembert 1
 const configPie = {
     type: 'pie',
     data: {

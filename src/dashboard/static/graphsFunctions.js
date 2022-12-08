@@ -66,18 +66,13 @@ function zoomClick(click, chart, labels){
         if (click.offsetY > limiteYTop && click.offsetY < limiteYBottom && click.offsetX > limiteXLeft + tailleBaton * elt && click.offsetX < limiteXLeft + tailleBaton * (elt+1)){
             var valeurLabel = chart.data.labels[elt]
             console.log("valeurLabel: ",valeurLabel);
-            // console.log(listePaysInput);
-            // console.log(chart.data.datasets[elt].data[elt]);
-            // console.log(typeof(valeurLabel));
-            // console.log(typeof(listePaysInput));
-            
+
             // Suite du code seulement si page graph3 
             if (document.getElementById("quelPage").innerText == "graph3"){
                 if (listePaysInput.includes(valeurLabel)){
                     try{
                         document.getElementById("id_param2_1").value = valeurLabel;
                         document.getElementById("id_param1_1").value = 5; //À rendre dynamique
-                        // document.getElementById("form1submit").submit;
                         document.forms["form1"].submit();
                     }
                     catch(error){

@@ -108,7 +108,7 @@ window.onload = function() {
     // ctx.onclick = clickhandler;
 
     //Test 2 
-    function zoomClick(click, chart){
+    function zoomClick(click, chart, labels){
         // Tuto YTB à garder au cas ou
         // chart.config.options.scales.x.min = 2;
         // chart.config.options.scales.x.max = 4;
@@ -138,11 +138,11 @@ window.onload = function() {
 
         // Algo click event V2
 
-        var limiteYTop = myChart.chartArea.top;
-        var limiteYBottom = myChart.chartArea.bottom;
+        var limiteYTop = chart.chartArea.top;
+        var limiteYBottom = chart.chartArea.bottom;
 
-        var limiteXRight = myChart.chartArea.right;
-        var limiteXLeft = myChart.chartArea.left;
+        var limiteXRight = chart.chartArea.right;
+        var limiteXLeft = chart.chartArea.left;
 
         var qteX = labels.length;
 
@@ -159,7 +159,7 @@ window.onload = function() {
 
     }
 
-    myChart.canvas.addEventListener('click', (e) => {zoomClick(e, myChart);
+    myChart.canvas.addEventListener('click', (e) => {zoomClick(e, myChart, labels);
     })
 
 };

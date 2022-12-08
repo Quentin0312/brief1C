@@ -70,26 +70,29 @@ function zoomClick(click, chart, labels){
             // console.log(chart.data.datasets[elt].data[elt]);
             // console.log(typeof(valeurLabel));
             // console.log(typeof(listePaysInput));
-
-            if (listePaysInput.includes(valeurLabel)){
-                try{
-                    document.getElementById("id_param2_1").value = valeurLabel;
-                    document.getElementById("id_param1_1").value = 5; //À rendre dynamique
-                    // document.getElementById("form1submit").submit;
-                    document.forms["form1"].submit();
+            
+            // Suite du code seulement si page graph3 
+            if (document.getElementById("quelPage").innerText == "graph3"){
+                if (listePaysInput.includes(valeurLabel)){
+                    try{
+                        document.getElementById("id_param2_1").value = valeurLabel;
+                        document.getElementById("id_param1_1").value = 5; //À rendre dynamique
+                        // document.getElementById("form1submit").submit;
+                        document.forms["form1"].submit();
+                    }
+                    catch(error){
+                        console.log(error);
+                    }
                 }
-                catch(error){
-                    console.log(error);
-                }
-            }
-            else{
-                try{
-                    document.getElementById("id_param2_2").value = valeurLabel;
-                    document.getElementById("id_param1_2").value = 5; // À rendre dynamique
-                    document.forms["form2"].submit();
-                }
-                catch(error){
-                    console.log(error);
+                else{
+                    try{
+                        document.getElementById("id_param2_2").value = valeurLabel;
+                        document.getElementById("id_param1_2").value = 5; // À rendre dynamique
+                        document.forms["form2"].submit();
+                    }
+                    catch(error){
+                        console.log(error);
+                    }
                 }
             }
         }

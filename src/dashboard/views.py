@@ -411,7 +411,8 @@ def graphPays(request):
 
     # Transformation rows en datasets compatible pour chart JS
     valeurs, labels = rowToVariable(rows)
-
+    print("labels=>")
+    print(labels)
     # Context
     form = ParamForm
     context = {

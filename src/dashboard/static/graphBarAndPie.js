@@ -85,13 +85,55 @@ const configPie = {
     }
     };
 
+// Fonction onclick
+function clickhandler(click){
+    const points = myChart.getElementsAtEventForMode
+}
+
+
 // Afficher dans le HTML
 window.onload = function() {
     // Histogramme
     var ctx = document.getElementById('bar-chart').getContext('2d');
-    window.myPie = new Chart(ctx, configBar);
+    var myChart = new Chart(ctx, configBar);
     
     // Camembert
     var ctxPie = document.getElementById('pie-chart').getContext('2d');
     window.myPie = new Chart(ctxPie, configPie);
+
+    // Fonction onclick
+    // function clickhandler(click){
+    //     const points = window.myPie.getElementsAtEventForMode(click, 'nearest', {intersect: true}, true);
+    //     if (points.length){
+    //         console.log(points.length)
+    //     }
+    // }
+    // ctx.onclick = clickhandler;
+
+    //Test 2 
+    function zoomClick(click, chart){
+        // Tuto YTB à garder au cas ou
+        // chart.config.options.scales.x.min = 2;
+        // chart.config.options.scales.x.max = 4;
+        // chart.update();
+        var proportionXMarge = 0.11
+        var qteX = labels.length
+        var longueurXCanva = ctx.canvas.width
+        var longueurXMarge = longueurXCanva*proportionXMarge
+        var tailleBaton = longueurXCanva * (1 - proportionXMarge) / qteX
+        console.log(tailleBaton)
+        for (elt in labels){
+            eltPlus = elt + 1
+            if (click.offsetX > longueurXMarge + tailleBaton*elt && click.offsetX < longueurXMarge + tailleBaton * (elt + 1)){
+                console.log(chart.data.datasets[elt].data)
+                console.log(elt)
+            }
+        }
+        // console.log(chart.data.datasets[0].data)
+        // console.log("click=>",click.offsetX)
+    }
+
+    myChart.canvas.addEventListener('click', (e) => {zoomClick(e, myChart);
+    })
+
 };

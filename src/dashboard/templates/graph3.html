@@ -6,30 +6,30 @@
 <h1>Graph 3 v2</h1>
 
 <!-- From1 -->
-<form action method ="POST">
+<form action method ="POST" id="form1">
     {% csrf_token %}
     <!-- {{form.as_p}} -->
 
     <!-- Entrée valeur nomgraph (automatique) -->
     <p>
         <label hidden for="id_nomgraph">Nomgraph:</label>
-        <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph" value="graph3ProduitsPays">
+        <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph_1" value="graph3ProduitsPays">
     </p>
 
     <!-- Entrée valeur TOP  -->
     <p>
         <label for="id_param1">Top  :</label>
-        <input type="number" name="param1" id="id_param1">
+        <input type="number" name="param1" id="id_param1_1">
 
     <!-- Entrée valeur Pays -->
         <label for="id_param2">Pays:</label>
-        <input list="listePays" name="param2" maxlength="50" id="id_param2">
+        <input list="listePays" name="param2" maxlength="50" id="id_param2_1">
         <datalist id="listePays">
             {% for elt in listePays %}
-            <option value="{{ elt }}">
+            <option value="{{ elt }}" class="pays">
             {% endfor %}
         </datalist>
-        <input type="submit" name="test" value="voir">
+        <input type="submit" name="test" value="voir" id="form1submit">
     </p>
 </form>
 
@@ -48,27 +48,27 @@
     </div>
 </div>
 <!-- From2 -->
-<form action method ="POST">
+<form action method ="POST" id="form2">
     {% csrf_token %}
     <!-- {{form.as_p}} -->
 
     <!-- Entrée valeur nomgraph (automatique) -->
     <p>
         <label hidden for="id_nomgraph">Nomgraph:</label>
-        <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph" value="graph3PaysProduits">
+        <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph_2" value="graph3PaysProduits">
     </p>
 
     <!-- Entrée valeur TOP  -->
     <p>
         <label for="id_param1">Top  :</label>
-        <input type="number" name="param1" id="id_param1">
+        <input type="number" name="param1" id="id_param1_2">
 
     <!-- Entrée valeur Produit -->
         <label for="id_param2">Produits:</label>
-        <input list="listeProduits" name="param2" maxlength="50" id="id_param2">
+        <input list="listeProduits" name="param2" maxlength="50" id="id_param2_2">
         <datalist id="listeProduits">
             {% for elt in listeProduits %}
-            <option value="{{ elt }}">
+            <option value="{{ elt }}" class="produits">
             {% endfor %}
         </datalist>
         <input type="submit" name="test" value="voir">

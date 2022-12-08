@@ -35,6 +35,19 @@ function creerListeDataFinal(dicoData, labels){
     return listDataFinal
 }
 function zoomClick(click, chart, labels){
+    var listePaysInput = [];
+    var i = -1;
+    while (true){
+        i +=1;
+        try{
+            var paysInput = document.getElementsByClassName("pays")[i].value;
+            listePaysInput.push(paysInput);
+        }
+        catch{
+            break;
+        }
+    }
+    // console.log("pays", listePaysInput);
 
     // Algo click event V2
     var limiteYTop = chart.chartArea.top;
@@ -47,11 +60,38 @@ function zoomClick(click, chart, labels){
 
     var tailleBaton = ( limiteXRight - limiteXLeft ) / qteX
 
+    // Boucle for permet d'analyser la position du click
     for (elt in labels){
         elt = parseInt(elt);
         if (click.offsetY > limiteYTop && click.offsetY < limiteYBottom && click.offsetX > limiteXLeft + tailleBaton * elt && click.offsetX < limiteXLeft + tailleBaton * (elt+1)){
-            console.log(chart.data.labels[elt]);
-            console.log(chart.data.datasets[elt].data[elt]);
+            var valeurLabel = chart.data.labels[elt]
+            console.log("valeurLabel: ",valeurLabel);
+            // console.log(listePaysInput);
+            // console.log(chart.data.datasets[elt].data[elt]);
+            // console.log(typeof(valeurLabel));
+            // console.log(typeof(listePaysInput));
+
+            if (listePaysInput.includes(valeurLabel)){
+                try{
+                    document.getElementById("id_param2_1").value = valeurLabel;
+                    document.getElementById("id_param1_1").value = 5; //À rendre dynamique
+                    // document.getElementById("form1submit").submit;
+                    document.forms["form1"].submit();
+                }
+                catch(error){
+                    console.log(error);
+                }
+            }
+            else{
+                try{
+                    document.getElementById("id_param2_2").value = valeurLabel;
+                    document.getElementById("id_param1_2").value = 5; // À rendre dynamique
+                    document.forms["form2"].submit();
+                }
+                catch(error){
+                    console.log(error);
+                }
+            }
         }
     }
 }

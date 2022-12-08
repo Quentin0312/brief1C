@@ -116,17 +116,21 @@ window.onload = function() {
         // chart.config.options.scales.x.min = 2;
         // chart.config.options.scales.x.max = 4;
         // chart.update();
-        var proportionXMarge = 0.11
-        var qteX = labels.length
-        var longueurXCanva = ctx.canvas.width
-        var longueurXMarge = longueurXCanva*proportionXMarge
-        var tailleBaton = longueurXCanva * (1 - proportionXMarge) / qteX
-        console.log(tailleBaton)
+        var proportionXMarge = 0.11;
+        var qteX = labels.length;
+        var longueurXCanva = ctx.canvas.width;
+        var longueurXMarge = longueurXCanva*proportionXMarge;
+        var tailleBaton = longueurXCanva * (1 - proportionXMarge) / qteX;
+
         for (elt in labels){
-            eltPlus = elt + 1
-            if (click.offsetX > longueurXMarge + tailleBaton*elt && click.offsetX < longueurXMarge + tailleBaton * (elt + 1)){
-                console.log(chart.data.datasets[elt].data)
-                console.log(elt)
+            elt = parseInt(elt)
+            var eltPlus = elt + 1
+            if (click.offsetX > (longueurXMarge + tailleBaton*elt) && click.offsetX < (longueurXMarge + tailleBaton * eltPlus)){
+                console.log(chart.data.labels[elt]);
+                // console.log((longueurXMarge + tailleBaton*elt), ">", click.offsetX, "<", (longueurXMarge + tailleBaton * eltPlus))
+                // console.log("longueurXMarge=> ", longueurXMarge)
+                // console.log("tailleBaton => ", tailleBaton)
+                // console.log("eltPLus => ", eltPlus)
             }
         }
         // console.log(chart.data.datasets[0].data)

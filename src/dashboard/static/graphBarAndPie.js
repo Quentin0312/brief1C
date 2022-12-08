@@ -116,25 +116,28 @@ window.onload = function() {
         // chart.config.options.scales.x.min = 2;
         // chart.config.options.scales.x.max = 4;
         // chart.update();
+
+        // Proportion sur le canva de la marge de gauche
         var proportionXMarge = 0.11;
+        // Len labels
         var qteX = labels.length;
+        // Largeur du canva
         var longueurXCanva = ctx.canvas.width;
+        // Largeur de la marge de gauche
         var longueurXMarge = longueurXCanva*proportionXMarge;
+        // Largeur d'une colonne d'un histogramme
         var tailleBaton = longueurXCanva * (1 - proportionXMarge) / qteX;
 
         for (elt in labels){
             elt = parseInt(elt)
             var eltPlus = elt + 1
-            if (click.offsetX > (longueurXMarge + tailleBaton*elt) && click.offsetX < (longueurXMarge + tailleBaton * eltPlus)){
-                console.log(chart.data.labels[elt]);
-                // console.log((longueurXMarge + tailleBaton*elt), ">", click.offsetX, "<", (longueurXMarge + tailleBaton * eltPlus))
-                // console.log("longueurXMarge=> ", longueurXMarge)
-                // console.log("tailleBaton => ", tailleBaton)
-                // console.log("eltPLus => ", eltPlus)
+            if (click.offsetX > (longueurXMarge + tailleBaton*elt) && click.offsetX < (longueurXMarge + tailleBaton * eltPlus) && click.offsetY > myChart.chartArea.top && click.offsetY < myChart.chartArea.bottom){
+                // console.log(chart.data.labels[elt]);
+                // console.log(chart.data.datasets[elt].data[elt]);
+                console.log(myChart.chartArea.bottom);
+                console.log(click.offsetY)
             }
         }
-        // console.log(chart.data.datasets[0].data)
-        // console.log("click=>",click.offsetX)
     }
 
     myChart.canvas.addEventListener('click', (e) => {zoomClick(e, myChart);

@@ -8,5 +8,6 @@ urlpatterns = [
     path('graphPays', views.graphPays, name="graphPays"),
     path('graphProduits', views.graphProduits, name="graphProduits"),
     path('graphTCD', views.graphTCD, name="graphTCD"),
-    path('graph3', views.graph3, name='graph3')
+    path('graph3', views.graph3, name='graph3'),
+    path('testActuel', views.testImportationToutLesTops, name='testActuel')
 ]

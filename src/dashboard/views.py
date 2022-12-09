@@ -545,6 +545,16 @@ def graph3(request):
     return render(request, "graph3.html", context)
     
 def testImportationToutLesTops(request):
+    dicoDataTotal = {}
+    # Liste Pays
+    listePays = recupererListePays()
+    for elt in listePays:
+        rows = requeteSQLgraph3_1(elt, 5)
+        valeurs, labels = rowToVariable(rows)
+        dicoDataTotal[elt] = valeurs
+
+    # Liste Produits
+    
     # Faire importer tout les tops5 pour voir si temps pas trop longs ou optimisable
     # Obj => graph3, utiliser chart.update() => necessite donc toutes les data préchargé dans chart JS
-    return HttpResponse("dico des matrices recu du sgbd à afficher ici")
+    return HttpResponse(str(dicoDataTotal))

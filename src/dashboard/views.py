@@ -544,3 +544,7 @@ def graph3(request):
 
     return render(request, "graph3.html", context)
     
+def testImportationToutLesTops(request):
+    # Faire importer tout les tops5 pour voir si temps pas trop longs ou optimisable
+    # Obj => graph3, utiliser chart.update() => necessite donc toutes les data préchargé dans chart JS
+    return HttpResponse("dico des matrices recu du sgbd à afficher ici")

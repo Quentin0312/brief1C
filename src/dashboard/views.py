@@ -62,7 +62,7 @@ def recupererListePaysTCD(rows):
 def rowToVariable(rows):
     labels = []
     valeurs = []
-    print(rows)
+    # print(rows)
     for elt in rows:
         for subElt in elt:
             if isinstance(subElt, str):
@@ -70,8 +70,8 @@ def rowToVariable(rows):
             else:
                 valeurs.append(subElt)
     
-    print("Labels=> "+str(labels))
-    print("Valeurs=> "+str(valeurs))
+    # print("Labels=> "+str(labels))
+    # print("Valeurs=> "+str(valeurs))
     
     return valeurs,labels
 
@@ -544,17 +544,34 @@ def graph3(request):
 
     return render(request, "graph3.html", context)
     
+# NON trop long...
 def testImportationToutLesTops(request):
     dicoDataTotal = {}
+
     # Liste Pays
     listePays = recupererListePays()
+
     for elt in listePays:
+        # Récupérer datas 
         rows = requeteSQLgraph3_1(elt, 5)
         valeurs, labels = rowToVariable(rows)
+        # Insérer/Enregistrer dans dictionnaire
         dicoDataTotal[elt] = valeurs
 
     # Liste Produits
-    
+    listeProduits = recupererListeProduits()
+    i = 0
+    for elt in listeProduits:
+        i+=1
+        if i > 100:
+            break
+        # Récupérer datas 
+        rows = requeteSQLgraph3_2(elt, 5)
+        valeurs, labels = rowToVariable(rows)
+        # Insérer/Enregistrer dans dictionnaire
+        dicoDataTotal[elt] = valeurs
+
+
     # Faire importer tout les tops5 pour voir si temps pas trop longs ou optimisable
     # Obj => graph3, utiliser chart.update() => necessite donc toutes les data préchargé dans chart JS
     return HttpResponse(str(dicoDataTotal))

@@ -34,18 +34,31 @@
 </form>
 
 <!-- Graphiques 1 -->
-<div class="container" style="width: 60%;">
-    <h3> Top {{ top1 }} produits pour {{ pays1 }}</h3> <!--Titre-->
-    <div class="row">
-        <div class="col-md-6">
+<div class="container">
+    <div class="row justify-content-center">
+        <h3 class="col-6"> Top {{ top1 }} produits pour {{ pays1 }}</h3> <!--Titre-->
+        <h3 class="col-6"> Top {{ top2 }} pays pour {{ produits2 }}</h3> <!--Titre-->
+
+    <div class="row justify-content-center">
+        <div class="col-3">
             <!-- Camembert -->
             <canvas id="pie-chart"></canvas>
         </div>
-        <div class="col-md-6">
+        <div class="col-3">
+            <!-- Camembert -->
+            <canvas id="pie-chart2"></canvas>
+        </div>
+        <div class="w-100 d-none d-md-block"></div>
+        <div class="col-4">
             <!-- Histogramme -->
             <canvas id="bar-chart"></canvas>
         </div>
+        <div class="col-4">
+            <!-- Histogramme -->
+            <canvas id="bar-chart2"></canvas>
+        </div>
     </div>
+
 </div>
 <!-- From2 -->
 <form action method ="POST" id="form2">
@@ -74,20 +87,17 @@
         <input type="submit" name="test" value="voir">
     </p>
 </form>
-<!-- Graphiques 2 -->
-<div class="container" style="width: 60%;">
-    <h3> Top {{ top2 }} pays pour {{ produits2 }}</h3> <!--Titre-->
-    <div class="row">
-        <div class="col-md-6">
-            <!-- Camembert -->
-            <canvas id="pie-chart2"></canvas>
-        </div>
-        <div class="col-md-6">
-            <!-- Histogramme -->
-            <canvas id="bar-chart2"></canvas>
-        </div>
-    </div>
-</div>
+
+<div class="row">
+    <div class="col-6 ">.col-6 .col-sm-4</div>
+    <div class="col-6">.col-6 .col-sm-4</div>
+  
+    <!-- Force next columns to break to new line at md breakpoint and up -->
+    <div class="w-100 d-none d-md-block"></div>
+  
+    <div class="col-6">.col-6 .col-sm-4</div>
+    <div class="col-6">.col-6 .col-sm-4</div>
+  </div>
 <!-- Bouton retour -->
 <br>
 <a href="http://127.0.0.1:8000/dashboard/">Retour</a> <!--Attention au déploiement, à changer-->

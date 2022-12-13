@@ -359,7 +359,7 @@ def produireLabelsEtDataGraph3(nomGraph, noGraph):
 
     # Rows to labels et data lists
     valeurs, labels = rowToVariable(rows)
-    
+    # print(valeurs)
     return valeurs, labels, topCible, paramCible
 
 def recupererListePays():
@@ -417,14 +417,39 @@ def graphPays(request):
 
     # Transformation rows en datasets compatible pour chart JS
     valeurs, labels = rowToVariable(rows)
-    print("labels=>")
-    print(labels)
+
+    # Modal
+    # Conctituer les datas et labels
+    dicoDataModal = {}
+    dicoLabelsModal = {}
+    for elt in labels:
+        rows = requeteSQLgraph3_1(elt, 5) # À rendre dynamique (TOP X et et 5)
+        valeurs0, labels0 = rowToVariable(rows)
+        dicoDataModal[elt] = valeurs0
+        dicoLabelsModal[elt]= labels0
+    # print(dicoDataModal, dicoLabelsModal)
+    # print("labels=>",labels)
+    # print("valeurs=>",valeurs)
+    # datasetsFinal = {}
+    # listeDataDansDatasets = []
+    # i = -1
+    # for elt in labels:
+    #     for elt2 in labels:
+    #         i +=1
+    #         if elt == labels[i]:
+    #             listeDataDansDatasets.append(valeurs[i])
+    #         else:
+    #             listeDataDansDatasets.append(0)
+    # print("listeDataDansDatasets=>",listeDataDansDatasets)
+
     # Context
     form = ParamForm
     context = {
         'labels' : labels,
         'data' : valeurs,
-        'form' : form
+        'form' : form,
+        'dicoDataModal' : dicoDataModal,
+        'dicoLabelsModal' : dicoLabelsModal
     }
 
     return render(request, "graphPays.html", context)

@@ -2,7 +2,7 @@
 
 {% block contenu %}
 {% load static %}
-
+<link href="{% static 'modal.css' %}" rel="stylesheet" >
 <p hidden id="quelPage">graphPays</p>
 <h1>Graphiques : Ventes par pays</h1>
 
@@ -39,7 +39,47 @@
     </div>
 
 </div>
+{% comment %} <!-- Bouton afficher modal-->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal"  data-bs-target="#myModal" id="myInput">Afficher modal</button>
 
+<!-- Modal page graph Pays-->
+<div class="modal" id="myModal" tabindex="-1" aria-labelledby="exemple" aria-hidden="true">
+    <div class="modal-dialog">
+
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">Modal title</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+
+        <div class="modal-body">
+          <p>Modal body text goes here.</p>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+        
+      </div>
+    </div>
+  </div> {% endcomment %}
+
+<!-- Trigger/Open The Modal -->
+<button id="myBtn">Open Modal</button>
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <p>Some text in the Modal..</p>
+    
+  </div>
+
+</div>
 <!-- Bouton retour -->
 <br>
 <a href="http://127.0.0.1:8000/dashboard/">Retour</a> <!--Attention au déploiement, à changer-->

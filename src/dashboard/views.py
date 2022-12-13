@@ -562,8 +562,8 @@ def graph3(request):
 
     return render(request, "graph3.html", context)
     
-# NON trop long...
-def testImportationToutLesTops(request):
+# Test/Labos------------------------------------------
+def testImportationToutLesTops(request):# NON trop long...
     # Vérification que user est login
     if request.user.is_authenticated ==False:
         return redirect('login')

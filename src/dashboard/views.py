@@ -391,11 +391,17 @@ def recupererListeProduits():
 
 # Views -----------------------------------------------
 def mainDashboard(request):
-
-    return render(request,"mainDashboard.html")
+    if request.user.is_authenticated == True:
+        print(request.user.is_authenticated)
+        return render(request,"mainDashboard.html")
+    else:
+        return redirect('/login') 
 
 def graphPays(request):
-
+    # Vérification que user est login
+    if request.user.is_authenticated ==False:
+        return redirect('login')
+    
     # Situation entrée valeur top
     if request.method == "POST":
         form = ParamForm(request.POST)
@@ -424,6 +430,9 @@ def graphPays(request):
     return render(request, "graphPays.html", context)
 
 def graphProduits(request):
+    # Vérification que user est login
+    if request.user.is_authenticated ==False:
+        return redirect('login')
 
     # Situation entrée valeur top
     if request.method == "POST":
@@ -452,6 +461,9 @@ def graphProduits(request):
     return render(request, "graphProduits.html", context)
 
 def upload_file(request):
+    # Vérification que user est login
+    if request.user.is_authenticated ==False:
+        return redirect('login')
 
     # Etape 2: Situation POST
     if request.method == 'POST':
@@ -477,6 +489,9 @@ def upload_file(request):
     return render(request, 'add.html', context={'form':form}) #Actualise la page en ajoutant le form file en context
 
 def graphTCD(request):
+    # Vérification que user est login
+    if request.user.is_authenticated ==False:
+        return redirect('login')
 
     # Requette SQL
     rows = selectSQL('SELECT factures.region, contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT 1000')
@@ -499,6 +514,9 @@ def graphTCD(request):
     return render(request, "graphTCD.html", context)
 
 def graph3(request):
+    # Vérification que user est login
+    if request.user.is_authenticated ==False:
+        return redirect('login')
 
     # Situation entrée valeur top
     if request.method == "POST":
@@ -546,6 +564,10 @@ def graph3(request):
     
 # NON trop long...
 def testImportationToutLesTops(request):
+    # Vérification que user est login
+    if request.user.is_authenticated ==False:
+        return redirect('login')
+
     dicoDataTotal = {}
 
     # Liste Pays

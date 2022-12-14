@@ -1,40 +1,25 @@
-// Modal
-var dataFinalModal = produireDataFinal(dicoLabelsModal["United Kingdom"], dicoDataModal["United Kingdom"]);
+// Info : Ce fichier JS fait:
+// - Gestion des modals page graph pays et page graph produit ( Partie: Modal )
+// - Contient toutes les fonctions à réutiliser dans tout les fichiers JS ( Partie: Fonctions )
+
+
+// Modal -----------------------------------------------------------------------------------------------------------------------------
+
+// Modal datasets
 var dicoDataFinalModal = {};
-console.log("data ici=>",dicoDataModal)
-console.log("labels ici=>",dicoLabelsModal)
+
+// Rempli datasets avec les valeurs selon la page affiché (donc elt dans labels)
 for (elt in labels){
     dicoDataFinalModal[labels[elt]] = produireDataFinal(dicoLabelsModal[labels[elt]], dicoDataModal[labels[elt]]);
 }
-// Graph histogramme modal
-const configBarModal = {
-    type: 'bar',
-    data: dataFinalModal,
-    options: {
-        responsive: true,
-        scales: {
-            x: {
-              stacked: true,
-            },
-            y: {
-              stacked: true
-            }
-          }
-    }
-};
-var dicoModal = {}
-console.log(dicoDataFinalModal)
-$(document).ready(function() { /* code here */ 
-      
+
+// Concerne les graphs modal, il faut attendre que le HTML produit tout les modal contenant les canvas 
+$(document).ready(function() {
+    
+    // Boucle pour pouvoir config dynamiquement les graphs modal
     for (elt in labels){
-        // Modal page graph Pays
-        // var myModal = document.getElementById('myModal')
-        // var myInput = document.getElementById('myInput')
 
-
-        // Modal ------------
-        // Histogramme
-        // var ctxBarModal = document.getElementById('bar-chartModal'+labels[elt]).getContext('2d');
+        // Configuration des charts histogramme modal
         new Chart(document.getElementById('bar-chartModal'+labels[elt]).getContext('2d'), {
             type: 'bar',
             data: dicoDataFinalModal[labels[elt]],
@@ -50,6 +35,8 @@ $(document).ready(function() { /* code here */
                 }
             }
         });
+
+        // Configuration des charts pie modal
         new Chart(document.getElementById('pie-chartModal'+labels[elt]).getContext('2d'), {
             type: 'pie',
             data: {
@@ -68,11 +55,20 @@ $(document).ready(function() { /* code here */
         })
     }
 });
-// Fonctions
+
+// Fonctions -------------------------------------------------------------------------------------------------------------------------
+
+// Créer la liste de datas pour graph histogramme truqué pour la mise à l'echelle dynamique ex=>[0,0,0,0,1542,0,0]
 function creerDicoData(labels, data){
-    var dicoData = {}
-    var listeData = []
-    var iData=-1
+    
+    // Dictionnaire contenant les listes de data. Objectif : pouvoir utiliser les datas dynamiquement ex: for elt ; data = dicoData["elt"]
+    var dicoData = {};
+    
+    // Contient une liste des datas d'une serie histogramme stacked
+    var listeData = [];
+
+    // Permet de construire une liste datas comme [0,0,0,0,1542,0,0] pour chart JS
+    var iData=-1;
     for (elt in labels){
         for (elt2 in labels){
             iData+=1
@@ -83,16 +79,25 @@ function creerDicoData(labels, data){
                 listeData.push(0)
             }
         }
+        // Liste data terminé injecté dans le dictionnaire
         dicoData[labels[elt]] = listeData
+
+        // Réinit pour la liste suivante
         listeData = []
         iData=-1
     }
-    // console.log("heeeey",dicoData)
     return dicoData 
 }
-function creerListeDataFinal(dicoData, labels){
+
+// Créer la data final pour la configuration du chart (dans la config=> {data: "creerConfigDataFinal(dicoData, labels)"})
+function creerConfigDataFinal(dicoData, labels){
+
+    // Liste contenant les dictionnaire data contenant {label:..., data:..., backgroundColor:..., stack:...}
     var listDataFinal = []
+
+    // Permet de faire correspondre le bon labels et dicoData
     var i2 = -1
+    // Permet de créer toute les series de datas
     for (elt in dicoData){
         i2 += 1
         listDataFinal.push({
@@ -102,23 +107,38 @@ function creerListeDataFinal(dicoData, labels){
             stack: 'Stack 0'
         })
     }
-    // console.log(dicoData)
     return listDataFinal
 }
-function zoomClick(click, chart, labels){
-    var listePaysInput = [];
-    var i = -1;
-    while (true){
-        i +=1;
-        try{
-            var paysInput = document.getElementsByClassName("pays")[i].value;
-            listePaysInput.push(paysInput);
-        }
-        catch{
-            break;
+
+// Permet d'afficher le bon modal selon la zone cliqué du graph histo
+function actionClick(click, chart, labels){
+
+    // Définit la liste des pays (existant dans la BDD) via la liste d'inputs du forms
+    // Ne concerne que la page graph 3
+    if (document.getElementById("quelPage").innerText == "graph3"){
+        var listePaysInput = [];
+        // Permet de push dans la liste tout les pays
+        var i = -1;
+        while (true){
+            i +=1;
+
+            // Try catch necessaire ici car break quand l'indice suivant (après le dernier) ne fonctionne pas
+            try{
+                // Récup du pays correspondant à l'indice
+                var paysInput = document.getElementsByClassName("pays")[i].value;
+
+                // Push ce pays dans la listePaysInput
+                listePaysInput.push(paysInput);
+            }
+            catch (error){
+                // console.log pas necessaire car error prévu pour déclencher le break !
+                // console.log(error)
+                break;
+            }
         }
     }
-    // console.log("pays", listePaysInput);
+
+// Code cleaned jusqu'içi -----------------------------------------------------------------------------------------------------------
 
     // Algo click event V2
     var limiteYTop = chart.chartArea.top;
@@ -155,7 +175,7 @@ function zoomClick(click, chart, labels){
                         document.forms["form1"].submit();
                     }
                     catch(error){
-                        // console.log(error);
+                        console.log(error);
                     }
                 }
                 else{
@@ -165,7 +185,7 @@ function zoomClick(click, chart, labels){
                         document.forms["form2"].submit();
                     }
                     catch(error){
-                        // console.log(error);
+                        console.log(error);
                     }
                 }
             }
@@ -173,16 +193,17 @@ function zoomClick(click, chart, labels){
     }
 }
 function produireDataFinal(labels, data){
+
     // Créer le dicoData pour histogramme bar stacked
     dicoData = creerDicoData(labels, data)
 
     // Créer la liste de data (presque) final pour histogramme bar stacked
-    var listDataFinal = creerListeDataFinal(dicoData, labels)
+    var configDataFinal = creerConfigDataFinal(dicoData, labels)
 
     // Data final à utiliser pour chart JS (histogramme bar stacked)
     const dataFinal = {
         labels: labels,
-        datasets: listDataFinal
+        datasets: configDataFinal
     }
     return dataFinal
 }
@@ -191,4 +212,3 @@ function produireDataFinal(labels, data){
 // console.log(myChartBarModal.data)
 // console.log(dicoLabelsModal["United Kingdom"])
 // console.log(dicoDataModal["United Kingdom"])
-// console.log(dataFinalModal)

@@ -93,9 +93,9 @@ window.onload = function() {
     window.myPie = new Chart(ctxPie2, configPie2);
 
     // Histogramme 1 cliquable
-    myChartH.canvas.addEventListener('click', (e) => {zoomClick(e, myChartH, labels1);
+    myChartH.canvas.addEventListener('click', (e) => {actionClick(e, myChartH, labels1);
     })
     // Histogramme 2 cliquable
-    myChartH2.canvas.addEventListener('click', (e) => {zoomClick(e, myChartH2, labels2);
+    myChartH2.canvas.addEventListener('click', (e) => {actionClick(e, myChartH2, labels2);
     })
 };

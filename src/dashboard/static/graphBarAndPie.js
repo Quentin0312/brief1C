@@ -50,7 +50,7 @@ window.onload = function() {
     window.myPie = new Chart(ctxPie, configPie);
 
     // Histogramme cliquable
-    myChart.canvas.addEventListener('click', (e) => {zoomClick(e, myChart, labels);
+    myChart.canvas.addEventListener('click', (e) => {actionClick(e, myChart, labels);
     })
 
 

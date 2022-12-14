@@ -2,148 +2,117 @@
 
 {% block contenu %}
 {% load static %}
-<link href="{% static 'modal.css' %}" rel="stylesheet" >
+
+<!-- cdn JQUERY -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js"></script>
-<p hidden id="quelPage">graphPays</p>
-<h1>Graphiques : Ventes par pays</h1>
 
 <!-- Datasets -->
 <script>
-    data0  = {{ data|safe }};
-    labels = {{ labels|safe }};
-    dicoDataModal = {{ dicoDataModal|safe }};
-    dicoLabelsModal = {{ dicoLabelsModal|safe }};
+  data0  = {{ data|safe }};
+  labels = {{ labels|safe }};
+  dicoDataModal = {{ dicoDataModal|safe }};
+  dicoLabelsModal = {{ dicoLabelsModal|safe }};
 </script>
 
-<!-- From -->
+<!-- Permet la verif de la page dans JS -->
+<p hidden id="quelPage">graphPays</p>
+
+<!-- Titre -->
+<h1>Graphiques : Ventes par pays</h1>
+
+<!-- From TOP X--------------------------------------------------------------------------------------------------->
 <form action method ="POST">
-    {% csrf_token %}
-    <!-- {{form.as_p}} -->
+  {% csrf_token %}
+  <!-- {{form.as_p}} -->
 
-    <!-- colonne nomgraph dans table paramgraph -->
-    <p>
-        <label hidden for="id_nomgraph">Nomgraph:</label>
-        <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph" value="pays">
-    </p>
+  <!-- colonne nomgraph dans table paramgraph -->
+  <p>
+    <label hidden for="id_nomgraph">Nomgraph:</label>
+    <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph" value="pays">
+  </p>
 
-    <!-- Entrée valeur TOP  -->
-    <p>
-        <label for="id_param1">Top  :</label>
-        <input type="number" name="param1" id="id_param1">
-        <input type="submit" name="test" value="voir">
-    </p>
+  <!-- Entrée valeur TOP  -->
+  <p>
+    <label for="id_param1">Top  :</label>
+    <input type="number" name="param1" id="id_param1">
+
+    <!-- Bouton -->
+    <input type="submit" name="test" value="voir">
+  </p>
 </form>
 
-<!-- Graphique -->
+<!-- Graphique ----------------------------------------------------------------------------------------------------->
 <div id="container" style="width: 80%;">
-    <div class="row">
-        <div class="col-md-6">
-            <!-- Camembert -->
-            <canvas id="pie-chart"></canvas>
-        </div>
-        <div class="col-md-6">
-            <!-- Histogramme -->
-            <canvas id="bar-chart"></canvas>
-        </div>
+  <div class="row">
+
+    <!-- Camembert -->
+    <div class="col-md-5">
+      <canvas id="pie-chart"></canvas>
     </div>
-</div>
-<!-- Bouton afficher modal-->
-<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal"  data-bs-target="#myModal" id="myInput">Afficher modal</button> -->
 
-<!-- Modal page graph Pays-->
-<!-- <div class="modal" id="myModal" tabindex="-1" aria-labelledby="exemple" aria-hidden="true">
-    <div class="modal-dialog">
-
-      <div class="modal-content">
-
-        <div class="modal-header">
-          <h5 class="modal-title">Modal title</h5>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-
-        <div class="modal-body">
-          <p>Modal body text goes here.</p>
-        </div>
-        
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="button" class="btn btn-primary">Save changes</button>
-        </div>
-        
-      </div>
+    <!-- Histogramme -->
+    <div class="col-md-6">
+      <canvas id="bar-chart"></canvas>
     </div>
-  </div> -->
-<!-- {% for elt in labels %} -->
-<!-- Trigger/Open The Modal -->
-<!-- <button id="myBtn{{ elt }}">Open Modal</button> -->
 
-<!-- The Modal -->
-<!-- <div id="myModal{{ elt }}" class="modal"> -->
-
-  <!-- Modal content -->
-  <!-- <div class="modal-content">
-    <span id="close{{ elt }}">&times;</span>
-    <p id="contenuModal{{ elt }}">Some text in the Modal..</p> -->
-    <!-- Graphique Modal -->
-    <!-- <div id="container{{ elt }}" style="width: 80%;">
-        <div class="row">
-            <div class="col-md-6"> -->
-                <!-- Camembert -->
-                <!-- <canvas id="pie-chartModal{{ elt }}"></canvas>
-            </div>
-            <div class="col-md-6"> -->
-                <!-- Histogramme -->
-                <!-- <canvas id="bar-chartModal{{ elt }}"></canvas>
-            </div>
-        </div>
-    </div>
-    
-  </div>
-</div> -->
-<!-- {% endfor %} -->
-<!-- Button to Open the Modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-  Open modal
-</button>
-
-<!-- The Modal -->
-<div class="modal" id="myModal">
-  <div class="modal-dialog">
-    <div class="modal-content">
-
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h4 class="modal-title">Modal Heading</h4>
-        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-      </div>
-
-      <!-- Modal body -->
-      <div class="modal-body">
-        Modal body..
-      </div>
-
-      <!-- Modal footer -->
-      <div class="modal-footer">
-        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-      </div>
-
-    </div>
   </div>
 </div>
+
+<!-- Modals genérés auto ----------------------------------------------------------------------------------------------->
+{% for elt in labels %}
+<!-- Boutons ouvrir le modal -->
+<button hidden type="button" id="myBtn{{ elt|cut:' ' }}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal{{ elt|cut:' ' }}" >Open Modal</button>
+
+<!-- The Modal -->
+<div class="modal" id="myModal{{ elt|cut:' ' }}">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Top 5 produits pour le pays {{ elt }}</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <div id="container{{ elt }}">
+                    <div class="row">
+
+                        <!-- Camembert -->
+                        <div class="col-md-6">
+                            <canvas id="pie-chartModal{{ elt }}"></canvas>
+                        </div>
+
+                        <!-- Histogramme -->
+                        <div class="col-md-6">
+                            <canvas id="bar-chartModal{{ elt }}"></canvas>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+
+        </div>
+    </div>
+  </div>
+{% endfor %}
 
 <!-- Bouton retour -->
 <br>
-<a href="http://127.0.0.1:8000/dashboard/">Retour</a> <!--Attention au déploiement, à changer-->
+<a href="/dashboard">Retour</a> <!--Attention au déploiement, à changer-->
 
 <!-- Chart JS -->
-<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script> -->
-
-
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
 
 <!-- Importe les functions pour graphs -->
-<!-- <script src="{% static 'graphsFunctions.js' %}"></script> -->
+<script src="{% static 'graphsFunctions.js' %}"></script>
 <!-- Graphs -->
-<!-- <script src="{% static 'graphBarAndPie.js' %}"></script> -->
+<script src="{% static 'graphBarAndPie.js' %}"></script>
 
 {% endblock %}

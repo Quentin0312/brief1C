@@ -169,13 +169,24 @@ function actionClick(click, chart, labels){
         if (click.offsetY > limiteYTop && click.offsetY < limiteYBottom && click.offsetX > limiteXLeft + tailleBaton * elt && click.offsetX < limiteXLeft + tailleBaton * (elt+1)){
             
             // Valeur correspondant à la zone cliquable via "l'index" de la zone (elt)
-            var valeurLabel = chart.data.labels[elt]
+            var valeurLabel = chart.data.labels[elt];
 
             // Seulement si page graph ou produits
             if (document.getElementById("quelPage").innerText == "graphPays" || document.getElementById("quelPage").innerText == "graphProduits"){
 
                 // Ouvre le modal correspondant en cliquant sur son bouton "afficher le modal" (en hidden dans le HTML)
-                document.getElementById("myBtn"+valeurLabel).click();
+                if (valeurLabel.indexOf(' ') >= 0){
+                    console.log(valeurLabel);
+                    valeurLabel = valeurLabel.replace(/\s+/g,'');
+                    console.log(valeurLabel);
+                    document.getElementById("myBtn"+valeurLabel).click();
+                }
+                else{
+                    document.getElementById("myBtn"+valeurLabel).click();
+                }
+                
+
+                
             }
         
             // Seulement si page graph3 

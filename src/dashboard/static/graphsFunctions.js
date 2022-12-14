@@ -5,56 +5,62 @@
 
 // Modal -----------------------------------------------------------------------------------------------------------------------------
 
-// Modal datasets
-var dicoDataFinalModal = {};
+// Si la page est pageProduits ou pagePays
+if (document.getElementById("quelPage").innerText == "graphPays" || document.getElementById("quelPage").innerText == "graphProduits"){
+    // Modal datasets
+    var dicoDataFinalModal = {};
 
-// Rempli datasets avec les valeurs selon la page affiché (donc elt dans labels)
-for (elt in labels){
-    dicoDataFinalModal[labels[elt]] = produireDataFinal(dicoLabelsModal[labels[elt]], dicoDataModal[labels[elt]]);
-}
-
-// Concerne les graphs modal, il faut attendre que le HTML produit tout les modal contenant les canvas 
-$(document).ready(function() {
-    
-    // Boucle pour pouvoir config dynamiquement les graphs modal
+    // Rempli datasets avec les valeurs selon la page affiché (donc elt dans labels)
     for (elt in labels){
+        dicoDataFinalModal[labels[elt]] = produireDataFinal(dicoLabelsModal[labels[elt]], dicoDataModal[labels[elt]]);
+    }
+    
+    // Concerne les graphs modal, il faut attendre que le HTML produit tout les modal contenant les canvas 
+    $(document).ready(function() {
+        
+        // Boucle pour pouvoir config dynamiquement les graphs modal
+        for (elt in labels){
 
-        // Configuration des charts histogramme modal
-        new Chart(document.getElementById('bar-chartModal'+labels[elt]).getContext('2d'), {
-            type: 'bar',
-            data: dicoDataFinalModal[labels[elt]],
-            options: {
-                responsive: true,
-                scales: {
-                    x: {
-                    stacked: true,
-                    },
-                    y: {
-                    stacked: true
+            // Configuration des charts histogramme modal
+            new Chart(document.getElementById('bar-chartModal'+labels[elt]).getContext('2d'), {
+                type: 'bar',
+                data: dicoDataFinalModal[labels[elt]],
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                        stacked: true,
+                        },
+                        y: {
+                        stacked: true
+                        }
                     }
                 }
-            }
-        });
+            });
 
-        // Configuration des charts pie modal
-        new Chart(document.getElementById('pie-chartModal'+labels[elt]).getContext('2d'), {
-            type: 'pie',
-            data: {
-                datasets: [{
-                    data: dicoDataModal[labels[elt]],
-                    backgroundColor: [
-                        '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-                    ],
-                    label: 'Population'
-                }],
-                labels: dicoLabelsModal[labels[elt]]
-            },
-            options: {
-                responsive: true
-            }
-        })
-    }
-});
+            // Configuration des charts pie modal
+            new Chart(document.getElementById('pie-chartModal'+labels[elt]).getContext('2d'), {
+                type: 'pie',
+                data: {
+                    datasets: [{
+                        data: dicoDataModal[labels[elt]],
+                        backgroundColor: [
+                            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+                        ],
+                        label: 'Population'
+                    }],
+                    labels: dicoLabelsModal[labels[elt]]
+                },
+                options: {
+                    responsive: true
+                }
+            })
+        }
+    });
+}
+
+
+
 
 // Fonctions -------------------------------------------------------------------------------------------------------------------------
 
@@ -174,14 +180,19 @@ function actionClick(click, chart, labels){
             // Seulement si page graph ou produits
             if (document.getElementById("quelPage").innerText == "graphPays" || document.getElementById("quelPage").innerText == "graphProduits"){
 
-                // Ouvre le modal correspondant en cliquant sur son bouton "afficher le modal" (en hidden dans le HTML)
+                // Le modal bootstrap n'accepte pas les espaces dans les ID bouton et modal
+                // Si espace dans valeurLabel
                 if (valeurLabel.indexOf(' ') >= 0){
-                    console.log(valeurLabel);
+
+                    // Suppression des espaces
                     valeurLabel = valeurLabel.replace(/\s+/g,'');
-                    console.log(valeurLabel);
+
+                    // Ouvre le modal correspondant en cliquant sur son bouton "afficher le modal" (en hidden dans le HTML)
                     document.getElementById("myBtn"+valeurLabel).click();
                 }
+                // Si pas d'espaces
                 else{
+                    // Ouvre le modal correspondant en cliquant sur son bouton "afficher le modal" (en hidden dans le HTML)
                     document.getElementById("myBtn"+valeurLabel).click();
                 }
                 

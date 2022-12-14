@@ -61,6 +61,7 @@
 <!-- Modals genérés auto ----------------------------------------------------------------------------------------------->
 {% for elt in labels %}
 <!-- Boutons ouvrir le modal -->
+<!-- elt|cut:'' pour enlever les espaces dans les ID car modal bootstrap n'aime pas sa ! -->
 <button hidden type="button" id="myBtn{{ elt|cut:' ' }}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal{{ elt|cut:' ' }}" >Open Modal</button>
 
 <!-- The Modal -->

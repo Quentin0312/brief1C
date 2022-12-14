@@ -37,7 +37,6 @@ const configPie1 = {
         responsive: true
     }
 };
-console.log(data2)
 
 // Graph histogramme 2
 const configBar2 = {

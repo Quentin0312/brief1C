@@ -2,7 +2,7 @@
 var dataFinalModal = produireDataFinal(dicoLabelsModal["United Kingdom"], dicoDataModal["United Kingdom"]);
 var dicoDataFinalModal = {};
 
-// experimentation
+
 for (elt in labels){
     dicoDataFinalModal[labels[elt]] = produireDataFinal(dicoLabelsModal[labels[elt]], dicoDataModal[labels[elt]]);
 }
@@ -23,59 +23,35 @@ const configBarModal = {
     }
 };
 var dicoModal = {}
-for (elt in labels){
-    // Modal page graph Pays
-    // var myModal = document.getElementById('myModal')
-    // var myInput = document.getElementById('myInput')
-
-    // Get the modal
-    dicoModal["modal"+labels[elt]] = document.getElementById("myModal"+labels[elt]);
-
-    // Get the button that opens the modal
-    dicoModal["btn"+labels[elt]] = document.getElementById("myBtn"+labels[elt]);
-
-    // Get the <span> element that closes the modal
-    dicoModal["span",labels[elt]] = document.getElementById("close"+labels[elt]);
-
-    // When the user clicks on the button, open the modal
-    dicoModal["btn"+labels[elt]].onclick = function() {
-        document.getElementById("myModal",labels[elt]).style.display = "block";
-    }
-
-    // When the user clicks on <span> (x), close the modal
-    dicoModal["span",labels[elt]].onclick = function() {
-        document.getElementById("close"+String(labels[elt])).style.display = "none";
-    }
-
-    // When the user clicks anywhere outside of the modal, close it
-    window.onclick = function(event) {
-    if (event.target == dicoModal["modal"+labels[elt]]) {
-        dicoModal["modal"+labels[elt]].style.display = "none";
-    }
-}
+console.log(dicoDataFinalModal)
+$(document).ready(function() { /* code here */ 
+      
+    for (elt in labels){
+        // Modal page graph Pays
+        // var myModal = document.getElementById('myModal')
+        // var myInput = document.getElementById('myInput')
 
 
-    // Modal ------------
-    // Histogramme
-    // var ctxBarModal = document.getElementById('bar-chartModal'+labels[elt]).getContext('2d');
-    new Chart(document.getElementById('bar-chartModal'+labels[elt]).getContext('2d'), {
-        type: 'bar',
-        data: dicoDataFinalModal[labels[elt]],
-        options: {
-            responsive: true,
-            scales: {
-                x: {
-                  stacked: true,
-                },
-                y: {
-                  stacked: true
+        // Modal ------------
+        // Histogramme
+        // var ctxBarModal = document.getElementById('bar-chartModal'+labels[elt]).getContext('2d');
+        new Chart(document.getElementById('bar-chartModal'+labels[elt]).getContext('2d'), {
+            type: 'bar',
+            data: dicoDataFinalModal[labels[elt]],
+            options: {
+                responsive: true,
+                scales: {
+                    x: {
+                    stacked: true,
+                    },
+                    y: {
+                    stacked: true
+                    }
                 }
-              }
-        }
-    });
-}
-
-
+            }
+        });
+    }
+});
 // Fonctions
 function creerDicoData(labels, data){
     var dicoData = {}
@@ -151,7 +127,7 @@ function zoomClick(click, chart, labels){
                 // ici faire chart update avec la nouvelle data correspondant au label selectionné
                 // Ensuite affiche le modal
 
-                dicoModal["modal"+valeurLabel].style.display = "block";
+                document.getElementById("myBtn"+valeurLabel).click();
             }
         
             // Suite du code seulement si page graph3 

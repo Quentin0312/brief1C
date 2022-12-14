@@ -475,12 +475,24 @@ def graphProduits(request):
     # Transformation rows en datasets compatible pour chart JS
     valeurs, labels = rowToVariable(rows)
 
+    # Modal
+    # Conctituer les datas et labels
+    dicoDataModal = {}
+    dicoLabelsModal = {}
+    for elt in labels:
+        rows = requeteSQLgraph3_2(elt, 5) # À rendre dynamique (TOP X et et 5)
+        valeurs0, labels0 = rowToVariable(rows)
+        dicoDataModal[elt] = valeurs0
+        dicoLabelsModal[elt]= labels0
+    
     # Context
     form = ParamForm
     context = {
         'labels' : labels,
         'data' : valeurs,
-        'form' : form
+        'form' : form,
+        'dicoDataModal' : dicoDataModal,
+        'dicoLabelsModal' : dicoLabelsModal
     }
 
     return render(request, "graphProduits.html", context)

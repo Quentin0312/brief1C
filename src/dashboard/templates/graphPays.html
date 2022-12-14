@@ -3,6 +3,7 @@
 {% block contenu %}
 {% load static %}
 <link href="{% static 'modal.css' %}" rel="stylesheet" >
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js"></script>
 <p hidden id="quelPage">graphPays</p>
 <h1>Graphiques : Ventes par pays</h1>
 
@@ -46,11 +47,11 @@
         </div>
     </div>
 </div>
-{% comment %} <!-- Bouton afficher modal-->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal"  data-bs-target="#myModal" id="myInput">Afficher modal</button>
+<!-- Bouton afficher modal-->
+<!-- <button type="button" class="btn btn-primary" data-bs-toggle="modal"  data-bs-target="#myModal" id="myInput">Afficher modal</button> -->
 
 <!-- Modal page graph Pays-->
-<div class="modal" id="myModal" tabindex="-1" aria-labelledby="exemple" aria-hidden="true">
+<!-- <div class="modal" id="myModal" tabindex="-1" aria-labelledby="exemple" aria-hidden="true">
     <div class="modal-dialog">
 
       <div class="modal-content">
@@ -71,74 +72,78 @@
         
       </div>
     </div>
-  </div> {% endcomment %}
-{% for elt in labels %}
+  </div> -->
+<!-- {% for elt in labels %} -->
 <!-- Trigger/Open The Modal -->
-<button id="myBtn{{ elt }}">Open Modal</button>
+<!-- <button id="myBtn{{ elt }}">Open Modal</button> -->
 
 <!-- The Modal -->
-<div id="myModal{{ elt }}" class="modal">
+<!-- <div id="myModal{{ elt }}" class="modal"> -->
 
   <!-- Modal content -->
-  <div class="modal-content">
+  <!-- <div class="modal-content">
     <span id="close{{ elt }}">&times;</span>
-    <p id="contenuModal{{ elt }}">Some text in the Modal..</p>
+    <p id="contenuModal{{ elt }}">Some text in the Modal..</p> -->
     <!-- Graphique Modal -->
-    <div id="container{{ elt }}" style="width: 80%;">
+    <!-- <div id="container{{ elt }}" style="width: 80%;">
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-6"> -->
                 <!-- Camembert -->
-                <canvas id="pie-chartModal{{ elt }}"></canvas>
+                <!-- <canvas id="pie-chartModal{{ elt }}"></canvas>
             </div>
-            <div class="col-md-6">
+            <div class="col-md-6"> -->
                 <!-- Histogramme -->
-                <canvas id="bar-chartModal{{ elt }}"></canvas>
+                <!-- <canvas id="bar-chartModal{{ elt }}"></canvas>
             </div>
         </div>
     </div>
     
   </div>
-</div>
-{% endfor %}
-<!-- Trigger/Open The Modal -->
-<button id="myBtn">Open Modal</button>
+</div> -->
+<!-- {% endfor %} -->
+<!-- Button to Open the Modal -->
+<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
+  Open modal
+</button>
 
 <!-- The Modal -->
-<div id="myModal" class="modal">
+<div class="modal" id="myModal">
+  <div class="modal-dialog">
+    <div class="modal-content">
 
-  <!-- Modal content -->
-  <div class="modal-content">
-    <span class="close">&times;</span>
-    <p id="contenuModal">Some text in the Modal..</p>
-    <!-- Graphique Modal -->
-    <div id="container" style="width: 80%;">
-        <div class="row">
-            <div class="col-md-6">
-                <!-- Camembert -->
-                <canvas id="pie-chartModal"></canvas>
-            </div>
-            <div class="col-md-6">
-                <!-- Histogramme -->
-                <canvas id="bar-chartModal"></canvas>
-            </div>
-        </div>
+      <!-- Modal Header -->
+      <div class="modal-header">
+        <h4 class="modal-title">Modal Heading</h4>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+
+      <!-- Modal body -->
+      <div class="modal-body">
+        Modal body..
+      </div>
+
+      <!-- Modal footer -->
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+      </div>
+
     </div>
-    
   </div>
 </div>
+
 <!-- Bouton retour -->
 <br>
 <a href="http://127.0.0.1:8000/dashboard/">Retour</a> <!--Attention au déploiement, à changer-->
 
 <!-- Chart JS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+<!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script> -->
 
 
 
 
 <!-- Importe les functions pour graphs -->
-<script src="{% static 'graphsFunctions.js' %}"></script>
+<!-- <script src="{% static 'graphsFunctions.js' %}"></script> -->
 <!-- Graphs -->
-<script src="{% static 'graphBarAndPie.js' %}"></script>
+<!-- <script src="{% static 'graphBarAndPie.js' %}"></script> -->
 
 {% endblock %}

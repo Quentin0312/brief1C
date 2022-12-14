@@ -2,7 +2,14 @@
 
 {% block contenu %}
 {% load static %}
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.2/jquery.min.js"></script>
+<!-- Datasets -->
+<script>
+    data0  = {{ data|safe }};
+    labels = {{ labels|safe }};
+    dicoDataModal = {{ dicoDataModal|safe }};
+    dicoLabelsModal = {{ dicoLabelsModal|safe }};
+</script>
 <p hidden id="quelPage">graphProduits</p>
 <h1>Graphiques : Ventes par produits</h1>
 
@@ -40,18 +47,55 @@
     </div>
 </div>
 
-<!-- Bouton retour -->
+<!-- Modal genére auto -------------------------------------------------------->
+{% for elt in labels %}
+<!-- Trigger/Open The Modal -->
+<button type="button" id="myBtn{{ elt }}" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal{{ elt }}" >Open Modal</button>
+
+<!-- The Modal -->
+<div class="modal" id="myModal{{ elt }}">
+    <div class="modal-dialog modal-fullscreen">
+      <div class="modal-content">
+  
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Top 5 pays pour le produit {{ elt }}</h4>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+  
+        <!-- Modal body -->
+        <div class="modal-body">
+            {{ elt }}
+            <div id="container{{ elt }}">
+                <div class="row">
+                    <div class="col-md-6">
+                        <!-- Camembert -->
+                        <canvas id="pie-chartModal{{ elt }}"></canvas>
+                    </div>
+                    <div class="col-md-6">
+                        <!-- Histogramme -->
+                        <canvas id="bar-chartModal{{ elt }}"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+  
+        <!-- Modal footer -->
+        <div class="modal-footer">
+          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+{% endfor %}
+
+<!-- Bouton retour
 <br>
 <a href="http://127.0.0.1:8000/dashboard/">Retour</a> <!--Attention au déploiement, à changer-->
 
 <!-- Chart JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
-
-<!-- Datasets -->
-<script>
-    data0  = {{ data|safe }};
-    labels = {{ labels|safe }};
-</script>
 
 <!-- Importe les functions pour les graphs -->
 <script src="{% static 'graphsFunctions.js' %}"></script>

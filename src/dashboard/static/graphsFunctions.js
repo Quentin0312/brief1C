@@ -138,50 +138,76 @@ function actionClick(click, chart, labels){
         }
     }
 
-// Code cleaned jusqu'içi -----------------------------------------------------------------------------------------------------------
 
-    // Algo click event V2
+    // Algo click event
+    // Repères des coordonnées: De G à D 0 => + ; De Haut à Bas : 0 => +
+
+    // Définition des limites du graph dans canva (en pixel ?)
+    
+    // Bord haut
     var limiteYTop = chart.chartArea.top;
+    // Bord bas
     var limiteYBottom = chart.chartArea.bottom;
-
+    // Bord droit
     var limiteXRight = chart.chartArea.right;
+    // Bord gauche
     var limiteXLeft = chart.chartArea.left;
 
+    // Nombre de zones cliquables, "nb de batons dans le graph histo"
     var qteX = labels.length;
 
-    var tailleBaton = ( limiteXRight - limiteXLeft ) / qteX
+    // Largeur d'une zone cliquable
+    var tailleBaton = ( limiteXRight - limiteXLeft ) / qteX;
 
-    // Boucle for permet d'analyser la position du click
+    // Boucle for permet d'analyser la position du click, selon une zone par boucle et action en conséquence
     for (elt in labels){
+
+        // Pour s'assurer que elt est un integer car sinon = string et cause erreurs 1+1=11 
         elt = parseInt(elt);
+
+        // Définition des contours de la zone cliquable en x et y, SI click à l'interieur execute la suite
         if (click.offsetY > limiteYTop && click.offsetY < limiteYBottom && click.offsetX > limiteXLeft + tailleBaton * elt && click.offsetX < limiteXLeft + tailleBaton * (elt+1)){
+            
+            // Valeur correspondant à la zone cliquable via "l'index" de la zone (elt)
             var valeurLabel = chart.data.labels[elt]
-            // console.log("valeurLabel: ",valeurLabel);
 
             // Seulement si page graph ou produits
             if (document.getElementById("quelPage").innerText == "graphPays" || document.getElementById("quelPage").innerText == "graphProduits"){
-                // ici faire chart update avec la nouvelle data correspondant au label selectionné
-                // Ensuite affiche le modal
 
+                // Ouvre le modal correspondant en cliquant sur son bouton "afficher le modal" (en hidden dans le HTML)
                 document.getElementById("myBtn"+valeurLabel).click();
             }
         
-            // Suite du code seulement si page graph3 
-            if (document.getElementById("quelPage").innerText == "graph3"){
+            // Seulement si page graph3 
+            else if (document.getElementById("quelPage").innerText == "graph3"){
+                
+                // Si c'est un pays => intéragit avec forms correspondant
                 if (listePaysInput.includes(valeurLabel)){
                     try{
+                        // Entre le pays lié au clic dans le forms correspondant
                         document.getElementById("id_param2_1").value = valeurLabel;
+
+                        // Entre top x dans le forms corrrespondant
                         document.getElementById("id_param1_1").value = 5; //À rendre dynamique
+
+                        // Clic sur le bouton submit du forms
                         document.forms["form1"].submit();
                     }
                     catch(error){
                         console.log(error);
                     }
                 }
+
+                // Pas pays donc produit => intéragit avec forms correspondant
                 else{
                     try{
+                        // Entre le produit lié au clic dans le forms correspondant
                         document.getElementById("id_param2_2").value = valeurLabel;
+
+                        // Entre top x dans le forms corrrespondant
                         document.getElementById("id_param1_2").value = 5; // À rendre dynamique
+
+                        // Clic sur le bouton submit du forms
                         document.forms["form2"].submit();
                     }
                     catch(error){
@@ -192,6 +218,8 @@ function actionClick(click, chart, labels){
         }
     }
 }
+
+// Permet de produire la data final utilisable avec chart JS (dico car dynamique)
 function produireDataFinal(labels, data){
 
     // Créer le dicoData pour histogramme bar stacked
@@ -208,7 +236,3 @@ function produireDataFinal(labels, data){
     return dataFinal
 }
 
-// Les console.log
-// console.log(myChartBarModal.data)
-// console.log(dicoLabelsModal["United Kingdom"])
-// console.log(dicoDataModal["United Kingdom"])

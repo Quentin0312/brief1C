@@ -1,8 +1,8 @@
 // Modal
 var dataFinalModal = produireDataFinal(dicoLabelsModal["United Kingdom"], dicoDataModal["United Kingdom"]);
 var dicoDataFinalModal = {};
-
-
+console.log("data ici=>",dicoDataModal)
+console.log("labels ici=>",dicoLabelsModal)
 for (elt in labels){
     dicoDataFinalModal[labels[elt]] = produireDataFinal(dicoLabelsModal[labels[elt]], dicoDataModal[labels[elt]]);
 }
@@ -50,6 +50,22 @@ $(document).ready(function() { /* code here */
                 }
             }
         });
+        new Chart(document.getElementById('pie-chartModal'+labels[elt]).getContext('2d'), {
+            type: 'pie',
+            data: {
+                datasets: [{
+                    data: dicoDataModal[labels[elt]],
+                    backgroundColor: [
+                        '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+                    ],
+                    label: 'Population'
+                }],
+                labels: dicoLabelsModal[labels[elt]]
+            },
+            options: {
+                responsive: true
+            }
+        })
     }
 });
 // Fonctions

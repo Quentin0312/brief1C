@@ -25,11 +25,11 @@ const configPie1 = {
     type: 'pie',
     data: {
         datasets: [{
-        data: data1,
-        backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-        ],
-        label: 'Population'
+            data: data1,
+            backgroundColor: [
+                '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+            ],
+            label: 'Population'
         }],
         labels: labels1
     },
@@ -37,6 +37,7 @@ const configPie1 = {
         responsive: true
     }
 };
+console.log(data2)
 
 // Graph histogramme 2
 const configBar2 = {

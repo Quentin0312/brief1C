@@ -393,7 +393,12 @@ def recupererListeProduits():
 def mainDashboard(request):
     if request.user.is_authenticated == True:
         print(request.user.is_authenticated)
+
+        # Test à supprimer
+        request.session["test"] = 123 
+
         return render(request,"mainDashboard.html")
+        # return redirect('testValidationImport', valeurTest = 12)
     else:
         return redirect('/login') 
 
@@ -427,20 +432,6 @@ def graphPays(request):
         valeurs0, labels0 = rowToVariable(rows)
         dicoDataModal[elt] = valeurs0
         dicoLabelsModal[elt]= labels0
-    # print(dicoDataModal, dicoLabelsModal)
-    # print("labels=>",labels)
-    # print("valeurs=>",valeurs)
-    # datasetsFinal = {}
-    # listeDataDansDatasets = []
-    # i = -1
-    # for elt in labels:
-    #     for elt2 in labels:
-    #         i +=1
-    #         if elt == labels[i]:
-    #             listeDataDansDatasets.append(valeurs[i])
-    #         else:
-    #             listeDataDansDatasets.append(0)
-    # print("listeDataDansDatasets=>",listeDataDansDatasets)
 
     # Context
     form = ParamForm
@@ -476,7 +467,7 @@ def graphProduits(request):
     valeurs, labels = rowToVariable(rows)
 
     # Modal
-    # Conctituer les datas et labels
+    # Constituer les datas et labels
     dicoDataModal = {}
     dicoLabelsModal = {}
     for elt in labels:
@@ -515,11 +506,15 @@ def upload_file(request):
         # Nettoyage du dataframe
         df = nettoyageDataframe(df)
 
+        # TEST À SUPPR
+        df = df.to_json() 
+        request.session['test'] = df
         # Importation dans la BDD
-        importer(df)
+        # importer(df)
 
-        return HttpResponse("C'est fait !")
-    
+        # return HttpResponse("C'est fait !")
+        # return redirect('/dashboard/upload_confirmation', df = "test", feedback = "Ceci est un feedback !")
+        return render(request, 'add.html', context={'form':form})
     # Etape 1
     else:
         form = UploadFileForm()
@@ -598,7 +593,11 @@ def graph3(request):
     }
 
     return render(request, "graph3.html", context)
-    
+
+def upload_confirmation(request, df, feedback):
+
+    return HttpResponse(df, feedback)
+
 # Test/Labos------------------------------------------
 def testImportationToutLesTops(request):# NON trop long...
     # Vérification que user est login
@@ -634,3 +633,9 @@ def testImportationToutLesTops(request):# NON trop long...
     # Faire importer tout les tops5 pour voir si temps pas trop longs ou optimisable
     # Obj => graph3, utiliser chart.update() => necessite donc toutes les data préchargé dans chart JS
     return HttpResponse(str(dicoDataTotal))
+
+def testValidationImport(request):
+    df = request.session['test']
+    df = pd.read_json(df)
+    print(df)
+    return HttpResponse(str(df))

@@ -11,5 +11,6 @@ urlpatterns = [
     path('graph3', views.graph3, name='graph3'),
     path('testActuel', views.testImportationToutLesTops, name='testActuel'),
     path('upload_confirmation', views.upload_confirmation, name="upload_confirmation"),
-    path('testValidationImport', views.testValidationImport, name="testValidationImport")
+    path('testValidationImport', views.testValidationImport, name="testValidationImport"),
+    path('addDF', views.addDF, name="addDF")
 ]

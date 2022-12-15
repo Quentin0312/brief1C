@@ -182,7 +182,7 @@ def nettoyageDataframe(dataframe):
     reste = avantNettoyage - apresNettoyage
     pourcentageDataPerdues = reste / avantNettoyage *100
     print("Pourcentage data perdues durant nettoyage=======> "+str(pourcentageDataPerdues))
-    return dataframe
+    return dataframe, pourcentageDataPerdues
 
 def importerProduits(df, engine):
 
@@ -504,17 +504,18 @@ def upload_file(request):
         df = pd.read_csv(file, encoding='ISO-8859-1')
 
         # Nettoyage du dataframe
-        df = nettoyageDataframe(df)
+        df, pourcentageDataPerdues = nettoyageDataframe(df)
 
-        # TEST À SUPPR
+        # Chantier en cours...
         df = df.to_json() 
-        request.session['test'] = df
+        request.session['dfNettoye'] = df
         # Importation dans la BDD
         # importer(df)
 
         # return HttpResponse("C'est fait !")
         # return redirect('/dashboard/upload_confirmation', df = "test", feedback = "Ceci est un feedback !")
-        return render(request, 'add.html', context={'form':form})
+        # ICI RENDER LE HTML FEEDBACK
+        return render(request, 'addFeedback.html', context={'feedback':pourcentageDataPerdues})
     # Etape 1
     else:
         form = UploadFileForm()
@@ -597,6 +598,18 @@ def graph3(request):
 def upload_confirmation(request, df, feedback):
 
     return HttpResponse(df, feedback)
+
+def addDF(request):
+    # Importation dans la BDD
+    dfNettoye = request.session["dfNettoye"]
+    # print("JSON=>",dfNettoye)
+    dfNettoye = pd.read_json(dfNettoye)
+    print("df=>",dfNettoye)
+    dfNettoye["datefacturation"] = pd.to_datetime(dfNettoye["datefacturation"], unit='ms')
+    print("df=>",dfNettoye)
+    importer(dfNettoye)
+    # return HttpResponse(dfNettoye)
+    return redirect(mainDashboard)
 
 # Test/Labos------------------------------------------
 def testImportationToutLesTops(request):# NON trop long...

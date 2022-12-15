@@ -6,12 +6,10 @@
 <form action="{% url 'add' %}" method="POST" enctype="multipart/form-data">
     {% csrf_token %}
     {{ form.file }}
-    <input type="submit" value="Upload">
+    <input type="submit" value="Analyser">
 </form>
 <br>
 <a href="http://127.0.0.1:8000/dashboard/">Retour</a> <!--Attention au déploiement, à changer-->
-<br>
-<a href="testValidationImport">testValidationImport</a>
  
 
 

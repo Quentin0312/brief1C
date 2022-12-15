@@ -620,13 +620,12 @@ def graph3(request):
 
     return render(request, "graph3.html", context)
 
-def upload_confirmation(request, df, feedback):
-
-    return HttpResponse(df, feedback)
-
 # Importation dans la BDD
 def addDF(request):
-
+    # Vérification que user est login
+    if request.user.is_authenticated ==False:
+        return redirect('login')
+    
     # Récup du dataframe en JSON dans request.session
     dfNettoye = request.session["dfNettoye"]
 
@@ -639,6 +638,8 @@ def addDF(request):
     # Import du dataframe dans la BDD
     importer(dfNettoye)
 
+    #Suppression du request.session par sécurité et/ou optimisation ?
+    request.session["dfNettoye"] = "Ma déja supprimé, en attente nouvelle valeur"
     return redirect(mainDashboard)
 
 # Test/Labos------------------------------------------
@@ -676,9 +677,3 @@ def testImportationToutLesTops(request):# NON trop long...
     # Faire importer tout les tops5 pour voir si temps pas trop longs ou optimisable
     # Obj => graph3, utiliser chart.update() => necessite donc toutes les data préchargé dans chart JS
     return HttpResponse(str(dicoDataTotal))
-
-def testValidationImport(request):
-    df = request.session['test']
-    df = pd.read_json(df)
-    print(df)
-    return HttpResponse(str(df))

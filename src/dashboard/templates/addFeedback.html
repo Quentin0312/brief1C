@@ -1,6 +1,15 @@
 {% extends 'base.html' %}
 
 {% block contenu %}
-<h5>Datas éliminées: {{ feedback }} %</h5>
+<!-- Liste feedback -->
+<h3>Ventes supprimées</h3>
+<p>Nombre de ventes avant suppression: <strong>{{ feedback.avantNettoyage }}</strong></p>
+<p>Après suppression des doublons (<strong>{{ feedback.qteSupprDoublons }}</strong>): <strong>{{ feedback.apresSupprDoublons }}</strong></p>
+<p>Après suppression des pays "Unspecified" (<strong>{{ feedback.qteSupprPays }}</strong>): <strong>{{ feedback.apresSupprPays }}</strong> </p>
+<p>Après suppression des avoirs (<strong>{{ feedback.qteSupprAvoir }}</strong>): <strong>{{ feedback.apresSupprAvoir }}</strong> </p>
+<p>Nombre de ventes après suppression: <strong>{{ feedback.apresNettoyage }}</strong></p>
+<p>Ventes supprimés: <strong>{{ feedback.lignesSuppr }}</strong> (<strong>{{ feedback.pourcentageDataPerdues }}</strong> %)</p>
+
+
 <a href="addDF"> Importer</a>
 {% endblock %} 

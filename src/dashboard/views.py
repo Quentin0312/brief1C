@@ -153,9 +153,13 @@ def nettoyageDataframe(dataframe):
 
     # Suppression doublons
     dataframe.drop_duplicates(subset=['InvoiceNo','StockCode'],inplace=True)
+    apresSupprDoublons = len(dataframe)
+    qteSupprDoublons = avantNettoyage - apresSupprDoublons
     
     # Pays à supprimer : Unspecified
     dataframe.drop(dataframe[dataframe['Country'] == 'Unspecified'].index, inplace = True)
+    apresSupprPays = len(dataframe)
+    qteSupprPays = apresSupprDoublons - apresSupprPays
 
     # Suppression des avoirs
     # len == 7
@@ -164,7 +168,8 @@ def nettoyageDataframe(dataframe):
     dataframe.drop(dataframe[dataframe['Quantity'] <0].index, inplace = True)
     # UnitPrice == 0
     dataframe.drop(dataframe[dataframe['UnitPrice'] == 0].index, inplace = True)
-
+    apresSupprAvoir = len(dataframe)
+    qteSupprAvoir = apresSupprPays - apresSupprAvoir
     # Description ??
 
     # Suppression columns inutiles
@@ -179,10 +184,10 @@ def nettoyageDataframe(dataframe):
 
     # Feedback data perdues
     apresNettoyage = len(dataframe)
-    reste = avantNettoyage - apresNettoyage
-    pourcentageDataPerdues = reste / avantNettoyage *100
+    lignesSuppr = avantNettoyage - apresNettoyage
+    pourcentageDataPerdues = lignesSuppr / avantNettoyage *100
     print("Pourcentage data perdues durant nettoyage=======> "+str(pourcentageDataPerdues))
-    return dataframe, pourcentageDataPerdues
+    return dataframe, pourcentageDataPerdues, avantNettoyage, apresSupprDoublons, qteSupprDoublons, apresSupprPays, qteSupprPays, apresSupprAvoir, qteSupprAvoir, apresNettoyage, lignesSuppr
 
 def importerProduits(df, engine):
 
@@ -504,22 +509,42 @@ def upload_file(request):
         df = pd.read_csv(file, encoding='ISO-8859-1')
 
         # Nettoyage du dataframe
-        df, pourcentageDataPerdues = nettoyageDataframe(df)
+        df, pourcentageDataPerdues, avantNettoyage, apresSupprDoublons, qteSupprDoublons, apresSupprPays, qteSupprPays, apresSupprAvoir, qteSupprAvoir, apresNettoyage, lignesSuppr  = nettoyageDataframe(df)
 
-        # Chantier en cours...
-        df = df.to_json() 
+        # Données feedback
+        dicoFeedback = {}
+
+        dicoFeedback['pourcentageDataPerdues'] = pourcentageDataPerdues
+        dicoFeedback['avantNettoyage'] = avantNettoyage
+        dicoFeedback['apresSupprDoublons'] = apresSupprDoublons
+        dicoFeedback['qteSupprDoublons'] = qteSupprDoublons
+        dicoFeedback['apresSupprPays'] = apresSupprPays
+        dicoFeedback['qteSupprPays'] = qteSupprPays
+        dicoFeedback['apresSupprAvoir'] = apresSupprAvoir
+        dicoFeedback['qteSupprAvoir'] = qteSupprAvoir
+        dicoFeedback['apresNettoyage'] = apresNettoyage
+        dicoFeedback['lignesSuppr'] = lignesSuppr
+
+
+
+        # df convertit en JSON pour être enregistré dans request.session
+        df = df.to_json()
+
+        # enregistrement du df dans request.session
         request.session['dfNettoye'] = df
-        # Importation dans la BDD
-        # importer(df)
 
-        # return HttpResponse("C'est fait !")
-        # return redirect('/dashboard/upload_confirmation', df = "test", feedback = "Ceci est un feedback !")
-        # ICI RENDER LE HTML FEEDBACK
-        return render(request, 'addFeedback.html', context={'feedback':pourcentageDataPerdues})
+        # Render de la page HTML affichant le feedback (dans le même URLs => avantages innaccessible sauf method=POST)
+        return render(request, 'addFeedback.html', context={'feedback':dicoFeedback})
+    
     # Etape 1
     else:
+
+        # Context
         form = UploadFileForm()
-    return render(request, 'add.html', context={'form':form}) #Actualise la page en ajoutant le form file en context
+        context = {
+            'form':form
+            }
+    return render(request, 'add.html', context) #Affiche la page en ayant le formulaire en context
 
 def graphTCD(request):
     # Vérification que user est login
@@ -599,16 +624,21 @@ def upload_confirmation(request, df, feedback):
 
     return HttpResponse(df, feedback)
 
+# Importation dans la BDD
 def addDF(request):
-    # Importation dans la BDD
+
+    # Récup du dataframe en JSON dans request.session
     dfNettoye = request.session["dfNettoye"]
-    # print("JSON=>",dfNettoye)
+
+    # JSON to dataframe
     dfNettoye = pd.read_json(dfNettoye)
-    print("df=>",dfNettoye)
+
+    # Format date provenant de JSON (ms since 1970) transformé pour l'import dans postgreSQL 
     dfNettoye["datefacturation"] = pd.to_datetime(dfNettoye["datefacturation"], unit='ms')
-    print("df=>",dfNettoye)
+
+    # Import du dataframe dans la BDD
     importer(dfNettoye)
-    # return HttpResponse(dfNettoye)
+
     return redirect(mainDashboard)
 
 # Test/Labos------------------------------------------

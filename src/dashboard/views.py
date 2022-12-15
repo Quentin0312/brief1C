@@ -640,6 +640,7 @@ def addDF(request):
 
     #Suppression du request.session par sécurité et/ou optimisation ?
     request.session["dfNettoye"] = "Ma déja supprimé, en attente nouvelle valeur"
+    
     return redirect(mainDashboard)
 
 # Test/Labos------------------------------------------

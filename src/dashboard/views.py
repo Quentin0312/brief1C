@@ -451,14 +451,10 @@ def recupererListeProduits():
 
 # Views ----------------------------------------------------------------------------------------------------------------
 def mainDashboard(request):
+    # Si utilisateur connecté
     if request.user.is_authenticated == True:
-        print(request.user.is_authenticated)
-
-        # Test à supprimer
-        request.session["test"] = 123 
 
         return render(request,"mainDashboard.html")
-        # return redirect('testValidationImport', valeurTest = 12)
     else:
         return redirect('/login') 
 

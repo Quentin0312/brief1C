@@ -15,9 +15,12 @@ import numpy as np
 import os
 
 
-# Fonctions ---------------------------------------------------------------------------------------------------
+# Fonctions ---------------------------------------------------------------------------------------------------------
 
-# M=> Récupération de la liste des produits pour le graph TCD
+# Concerne graphTCD seulement
+# M=> Récupération de la liste des produits pour le graph TCD à partie rows SQL
+# I=> rows (liste de tuples)
+# O=> liste des produits (liste de str)
 def recupererListeProduitsTCD(rows):
     listeProduits = []
     for elt in rows:
@@ -25,7 +28,10 @@ def recupererListeProduitsTCD(rows):
             listeProduits.append(elt[1])
     return listeProduits
 
+# Concerne le graphTCD seulement
 # M=> Récupération de la liste des pays pour le graph TCD
+# I=> rows (liste de tuples)
+# O=> liste des pays (liste de str)
 def recupererListePaysTCD(rows):
     listePays = []
     for elt in rows:
@@ -34,6 +40,9 @@ def recupererListePaysTCD(rows):
     return listePays
 
 # M=> Contribue à la production du datasets pour chart JS
+#     Produit 2 listes (valeurs et labels) à partir liste de tuples(rows)
+# I=> rows (liste de tuples)
+# O=> listes des valeurs "data" (list de int), liste des labels (list de str)
 def rowToVariable(rows):
     labels = []
     valeurs = []
@@ -47,8 +56,12 @@ def rowToVariable(rows):
     
     return valeurs,labels
 
+
+# Concerne seuelement le graphTCD
 # M=> Contribue à la production du datasets graph bar stacked "fraudé" pour le graph TCD
-def produitGraphDataset(listePays,listeProduits,rows):
+# I=> listePays, listeProduits, rows=> correspond à la requet SQL datasets du graph TCD: ventes par produits par pays => columns: region, codeproduit, vente
+# O=> Dictionnaire de data contenant liste de datas(value) par pays(key) (Dictionnaire contenant des listes)
+def produitGraphDataset(listePays, listeProduits, rows):
     dictionnaireData = {}
     # Par pays
     for pays in listePays:
@@ -375,8 +388,12 @@ def requeteSQLgraph3_2(produitCible,topCible):
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
     return rows
 
-
-def produireLabelsEtDataGraph3(nomGraph, noGraph):
+# Concerne le graph3
+# M=> Fonction parente produisant le datasets pour les graph3 et recuperant les top et paramCible dans la BDD
+# I=> nomGraph (str) "graph3ProduitsPays" OU "graph3PaysProduits"
+# O=> valeurs (list), labels (liste), topCible (int), paramCible (str)
+#     Datasets et dernier param top et cible de la BDD
+def produireLabelsEtDataGraph3(nomGraph):
 
     # Recupérer top
     topCible = recupererTopX(nomGraph)
@@ -385,10 +402,10 @@ def produireLabelsEtDataGraph3(nomGraph, noGraph):
     paramCible = recupererParam2(nomGraph)
 
     # Requete SQL si graph 1
-    if noGraph == 1:
+    if nomGraph == "graph3ProduitsPays":
         rows = requeteSQLgraph3_1(paramCible, topCible)
     # Requete SQL si graph 2
-    elif noGraph == 2:
+    elif nomGraph == "graph3PaysProduits":
         rows = requeteSQLgraph3_2(paramCible, topCible)
 
 
@@ -397,6 +414,10 @@ def produireLabelsEtDataGraph3(nomGraph, noGraph):
     # print(valeurs)
     return valeurs, labels, topCible, paramCible
 
+# Concerne le graph3
+# M=> Récupere la liste des pays présent dans la BDD
+# I=> Rien (fonction utilisé 1 seule fois, pas dynamique)
+# O=> liste des pays existants dans la table factures (list de str) 
 def recupererListePays():
     # Requete SQL
     rows = selectSQL("SELECT region FROM factures GROUP BY region ORDER BY region ASC")
@@ -410,6 +431,10 @@ def recupererListePays():
 
     return listePays
 
+# Concerne le graph3
+# M=> Récupere la liste des produits présent dans la BDD
+# I=> Rien (fonction utilisé 1 seule fois, pas dynamique)
+# O=> liste des produits existants dans la table factures (list de str) 
 def recupererListeProduits():
 
     # Requete SQL
@@ -424,7 +449,7 @@ def recupererListeProduits():
 
     return listeProduits
 
-# Views -----------------------------------------------
+# Views ----------------------------------------------------------------------------------------------------------------
 def mainDashboard(request):
     if request.user.is_authenticated == True:
         print(request.user.is_authenticated)
@@ -614,10 +639,10 @@ def graph3(request):
             return HttpResponseRedirect('graph3')
 
     # Données graph 1 Top produits par pays
-    valeurs1, labels1, topCible1, paramCible1 = produireLabelsEtDataGraph3("graph3ProduitsPays", 1)
+    valeurs1, labels1, topCible1, paramCible1 = produireLabelsEtDataGraph3("graph3ProduitsPays")
     
     # Données graph 2 Top pays par praoduits
-    valeurs2, labels2, topCible2, paramCible2 = produireLabelsEtDataGraph3("graph3PaysProduits", 2) 
+    valeurs2, labels2, topCible2, paramCible2 = produireLabelsEtDataGraph3("graph3PaysProduits") 
 
     # Récup la liste des pays pour l'input list dans HTML
     listePays = recupererListePays() 

@@ -15,7 +15,9 @@ import numpy as np
 import os
 
 
-# Fonctions -------------------------------------------
+# Fonctions ---------------------------------------------------------------------------------------------------
+
+# M=> Récupération de la liste des produits pour le graph TCD
 def recupererListeProduitsTCD(rows):
     listeProduits = []
     for elt in rows:
@@ -23,35 +25,7 @@ def recupererListeProduitsTCD(rows):
             listeProduits.append(elt[1])
     return listeProduits
 
-def csvToBDD(dataframe):
-    
-    # Importation à chaques itérations
-    iterations = 0
-    for elt in dataframe.loc:
-        iterations +=1
-        print(iterations)
-
-        cursor = connections['default'].cursor()
-
-        # Ordre important => FK...
-        # Importation dans la table Porduits
-        try: # codeproduit = PK mais apparait pls fois, ceci ne pose pas probleme pour la suite ... pour l'instant
-            cursor.execute("INSERT INTO produits(codeproduit) VALUES( %s )", [elt[1]])
-        except:
-            pass
-
-        # Importation dans la table factures
-        try: # nofacture = PK mais redondante dans le csv => cause donc erreur, ignorer n'est pas un probleme sauf si le csv ne correspond pas à ce qu'attendu
-            cursor.execute("INSERT INTO factures(nofacture,datefacturation,region) VALUES( %s , %s , %s )", [elt[0], elt[4], elt[7]])
-        except:
-            pass
-        
-        # Importation dans la table contenir
-        try:
-            cursor.execute("INSERT INTO contenir(nofacture,codeproduit,qte) VALUES ( %s , %s , %s )",[elt[0], elt[1], elt[3].item()]) # .item() transforme numpy.int64 en int "classique" accépté par postgreSQL
-        except:
-            pass
-
+# M=> Récupération de la liste des pays pour le graph TCD
 def recupererListePaysTCD(rows):
     listePays = []
     for elt in rows:
@@ -59,6 +33,7 @@ def recupererListePaysTCD(rows):
             listePays.append(elt[0])
     return listePays
 
+# M=> Contribue à la production du datasets pour chart JS
 def rowToVariable(rows):
     labels = []
     valeurs = []
@@ -70,11 +45,9 @@ def rowToVariable(rows):
             else:
                 valeurs.append(subElt)
     
-    # print("Labels=> "+str(labels))
-    # print("Valeurs=> "+str(valeurs))
-    
     return valeurs,labels
 
+# M=> Contribue à la production du datasets graph bar stacked "fraudé" pour le graph TCD
 def produitGraphDataset(listePays,listeProduits,rows):
     dictionnaireData = {}
     # Par pays
@@ -99,23 +72,33 @@ def produitGraphDataset(listePays,listeProduits,rows):
         listeData = [] # Réinitialiser pour pays suivant
     return dictionnaireData
 
+# M=> Fait une requete SQL (ATTENTION : Pas seulement SELECT car fetchall() )
+# I=> Requete SQL (str)
+# O=> Rows, ce que renvoie la requete SQL (liste de tuples)
 def selectSQL(scriptSQL):
     cursor = connections['default'].cursor()
     cursor.execute(scriptSQL)
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
     return rows
-    
+
+# À faire : Gestion des mauvaises entrées dans formulaire => ex si pas int valeurs par default
+# I=> Nom du graph concerné (str) "pays" OU "produits" OU "graph3ProduitsPays" OU "graph3PaysProduits"
+# M=> Permet de récuperer le top ? dans la BDD ou définit valeur par default
+# O=> Nombre correspondant au top (int)
 def recupererTopX(nomGraph):
     try:
+        # Requete SQL
         topSQL = "SELECT LAST_VALUE(param1) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='"+ nomGraph +"' LIMIT 1"
         top = selectSQL(topSQL)
-        print(top)
+        # Si pas de valeurs TOP dans la BDD
         if top == []:
             top = 10
+        # Récupération du int dans la liste de tuples
         else:
             for elt in top:
                 for subelt in elt:
                     top = subelt
+    # Autre situation d'erreur ?
     except:
         top = 10
     return top

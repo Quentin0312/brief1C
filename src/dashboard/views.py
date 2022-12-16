@@ -82,8 +82,8 @@ def selectSQL(scriptSQL):
     return rows
 
 # À faire : Gestion des mauvaises entrées dans formulaire => ex si pas int valeurs par default
-# I=> Nom du graph concerné (str) "pays" OU "produits" OU "graph3ProduitsPays" OU "graph3PaysProduits"
 # M=> Permet de récuperer le top ? dans la BDD ou définit valeur par default
+# I=> Nom du graph concerné (str) "pays" OU "produits" OU "graph3ProduitsPays" OU "graph3PaysProduits"
 # O=> Nombre correspondant au top (int)
 def recupererTopX(nomGraph):
     try:
@@ -103,6 +103,9 @@ def recupererTopX(nomGraph):
         top = 10
     return top
 
+# M=> Executer la bonne requete SQL selon le top x pour le graphProduits
+# I=> Nombre representant le top voulue (int)
+# O=> Ce que renvoie la requete SQL (liste de tuples)
 def selectSQLproduit(top):
     # Si valeur vide entrée
     if top == None:
@@ -114,6 +117,9 @@ def selectSQLproduit(top):
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
     return rows
 
+# M=> Executer la bonne requete SQL selon le top x pour le graphPays
+# I=> Nombre representant le top voulue (int)
+# O=> Ce que renvoie la requete SQL (liste de tuples)
 def selectSQLpays(top):
     # Si valeur vide entrée
     if top == None:
@@ -125,6 +131,10 @@ def selectSQLpays(top):
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
     return rows
 
+# M=> Nettoyer le dataframe
+# I=> Dataframe (dataframe pandas)
+# O=> Dataframe (dataframe pandas),
+#     Pls données feedback (int)
 def nettoyageDataframe(dataframe):
     avantNettoyage = len(dataframe)
 
@@ -136,11 +146,13 @@ def nettoyageDataframe(dataframe):
 
     # Suppression doublons
     dataframe.drop_duplicates(subset=['InvoiceNo','StockCode'],inplace=True)
+    # Données feedback
     apresSupprDoublons = len(dataframe)
     qteSupprDoublons = avantNettoyage - apresSupprDoublons
     
     # Pays à supprimer : Unspecified
     dataframe.drop(dataframe[dataframe['Country'] == 'Unspecified'].index, inplace = True)
+    # Données feedback
     apresSupprPays = len(dataframe)
     qteSupprPays = apresSupprDoublons - apresSupprPays
 
@@ -151,6 +163,7 @@ def nettoyageDataframe(dataframe):
     dataframe.drop(dataframe[dataframe['Quantity'] <0].index, inplace = True)
     # UnitPrice == 0
     dataframe.drop(dataframe[dataframe['UnitPrice'] == 0].index, inplace = True)
+    # Données feedback
     apresSupprAvoir = len(dataframe)
     qteSupprAvoir = apresSupprPays - apresSupprAvoir
     # Description ??
@@ -172,6 +185,10 @@ def nettoyageDataframe(dataframe):
     print("Pourcentage data perdues durant nettoyage=======> "+str(pourcentageDataPerdues))
     return dataframe, pourcentageDataPerdues, avantNettoyage, apresSupprDoublons, qteSupprDoublons, apresSupprPays, qteSupprPays, apresSupprAvoir, qteSupprAvoir, apresNettoyage, lignesSuppr
 
+# M=> Remplir la table produits
+# I=> Dataframe (dataframe Pandas), engine SQLalchemy
+# O=> Pas de variables retournées
+#     ACTION: Import dans table produits
 def importerProduits(df, engine):
 
     # Modification à effectué sur copie pour pas influencer les autres imports
@@ -210,6 +227,10 @@ def importerProduits(df, engine):
         # Importation dans BDD
         dataframeConcatenee.to_sql('produits', con=engine, if_exists='append', index=False)
 
+# M=> Remplir la table factures
+# I=> Dataframe (dataframe Pandas), engine SQLalchemy
+# O=> Pas de variables retournées
+#     ACTION: Import dans table factures
 def importerFactures(df,engine):
 
     # Modification à effectué sur copie pour pas influencer les autres imports
@@ -248,6 +269,10 @@ def importerFactures(df,engine):
         # Importation dans la table factures
         dataframeConcatenee.to_sql('factures', con=engine, if_exists='append', index=False)
 
+# M=> Remplir la table contenir
+# I=> Dataframe (dataframe Pandas), engine SQLalchemy
+# O=> Pas de variables retournées
+#     ACTION: Import dans table contenir
 def importerContenir(df, engine):
 
     # Modification à effectuer sur copie pour pas influencer les autres imports
@@ -283,6 +308,10 @@ def importerContenir(df, engine):
         # Importation dans BDD
         dataframeConcatenee.to_sql('contenir', con=engine, if_exists='append', index=False)
 
+# M=> Importer dans la BDD
+# I=> Dataframe (dataframe Pandas)
+# O=> Pas de variables retournées
+#     ACTION: Import dans la BDD
 def importer(df):
     engine = create_engine('postgresql://postgres:azerty@localhost:5432/brief1C')
 
@@ -295,26 +324,39 @@ def importer(df):
     # Table contenir
     importerContenir(df, engine)
 
+# Concerne graph3 seulement
+# M=> Récupérer le dernier param2 correspondant au pays voulu dans la BDD
+# I=> Nom du graph (str) "graph3ProduitsPays" OU "graph3PaysProduits"
+# O=> param2 de la table paramgraph (str)
 def recupererParam2(nomGraph):
     try:
+        # Requete SQL
         SQL = "SELECT LAST_VALUE(param2) OVER(ORDER BY auto_increment_id ASC RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) test FROM paramgraph WHERE nomgraph ='"+nomGraph+"' LIMIT 1"
         query = selectSQL(SQL)
 
+        # Si table vide => valeurs par default
         if query == [] and nomGraph == "graph3ProduitsPays":
-            paramCible = 'United Kingdom'
+            paramCible = 'United Kingdom' # Pour un code "pro" cette valeurs doit être dynamique, car compatible peut importe les pays existant dans le dataframe
         elif query == [] and nomGraph == "graph3PaysProduits":
-            paramCible = '85123A'
+            paramCible = '85123A' # Pour un code "pro" cette valeurs doit être dynamique, car compatible peut importe les produits existant dans le dataframe
+        
+        # Sinon valeurs présentes, récup du str dans la liste 
         else:
             for elt in query:
                 for subelt in elt:
                     paramCible = subelt
+    # Autre situation d'erreur ? => valeurs par defaults
     except:
         if nomGraph == 'graph3ProduitsPays':
-            paramCible = 'United Kingdom'
+            paramCible = 'United Kingdom' # Pour un code "pro" cette valeurs doit être dynamique, car compatible peut importe les pays existant dans le dataframe
         else:
-            paramCible = '85123A'
+            paramCible = '85123A' # Pour un code "pro" cette valeurs doit être dynamique, car compatible peut importe les produits existant dans le dataframe
     return paramCible
 
+# Concerne le graph3 et modal page graphPays
+# M=> Execute la requete SQL pour recup datasets top produits pour paysCible définit
+# I=> paysCible (str), topCible (int)
+# O=> Ce que renvoie la requeteSQL, datasets à retransformer (liste de tuples)
 def requeteSQLgraph3_1(paysCible,topCible):
     requeteSQL = "SELECT contenir.codeproduit, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture WHERE region = '" + paysCible + "' GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT " + str(topCible)
     cursor = connections['default'].cursor()
@@ -322,12 +364,17 @@ def requeteSQLgraph3_1(paysCible,topCible):
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
     return rows
 
+# Concerne le graph3 et modal page graphProduits
+# M=> Execute la requete SQL pour recup datasets top pays pour produitsCible définit dans I
+# I=> produitCible (str), topCible (int)
+# O=> Ce que renvoie la requeteSQL, datasets à retransformer (liste de tuples)
 def requeteSQLgraph3_2(produitCible,topCible):
     requeteSQL = "SELECT factures.region, COUNT(*) AS vente FROM contenir INNER JOIN factures ON factures.nofacture = contenir.nofacture WHERE codeproduit = '" + produitCible + "' GROUP BY factures.region, contenir.codeproduit ORDER BY vente DESC LIMIT " + str(topCible)
     cursor = connections['default'].cursor()
     cursor.execute(requeteSQL)
     rows = cursor.fetchall() # Contient ce que le SELECT renvoie
     return rows
+
 
 def produireLabelsEtDataGraph3(nomGraph, noGraph):
 

@@ -589,7 +589,6 @@ def upload_file(request):
     
     # Etape 1
     else:
-
         # Context
         form = UploadFileForm()
         context = {

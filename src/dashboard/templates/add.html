@@ -1,17 +1,37 @@
 {% extends 'base.html' %}
 
 {% block contenu %}
+<h5 style="text-align: center;">Importer</h5>
 <br>
-<h2>Importer/Ajouter à la base de données</h2>
-<form action="{% url 'add' %}" method="POST" enctype="multipart/form-data">
-    {% csrf_token %}
-    {{ form.file }}
-    <input type="submit" value="Analyser">
-</form>
-<br>
-<a href="/dashboard">Retour</a> <!--Attention au déploiement, à changer-->
- 
 
+<div class="container">
+    <div class="row">
+        <div class="d-flex justify-content-center">
+            <div class="col-6">
+                
+                <div class="card">
 
+                    <div class="card-header">
+                        Sélectionner un fichier csv
+                    </div>
+                
+                    <div class="card-body">
+                        <form action="/dashboard/add" method="POST" enctype="multipart/form-data">
+                            <div class="input-group mb-3">
+                                {% csrf_token %}
+                                <input type="file" name="file" class="form-control" id="id_file">
+                                <input type="submit" class="input-group-text" for="id_file" value="Analyser"></input>
+                            </div>
+                        </form>
+                    </div>
+                
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+
+</div>
 
 {% endblock %} 

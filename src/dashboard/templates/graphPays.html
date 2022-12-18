@@ -17,41 +17,47 @@
 <!-- Permet la verif de la page dans JS -->
 <p hidden id="quelPage">graphPays</p>
 
-<!-- Titre -->
-<h1>Graphiques : Ventes par pays</h1>
-
 <!-- From TOP X--------------------------------------------------------------------------------------------------->
 <form action method ="POST">
   {% csrf_token %}
   <!-- {{form.as_p}} -->
 
-  <!-- colonne nomgraph dans table paramgraph -->
+  <!-- colonne nomgraph dans table paramgraph (hidden)-->
   <p>
     <label hidden for="id_nomgraph">Nomgraph:</label>
     <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph" value="pays">
   </p>
 
-  <!-- Entrée valeur TOP  -->
-  <p>
-    <label for="id_param1">Top  :</label>
-    <input type="number" name="param1" id="id_param1">
-
-    <!-- Bouton -->
-    <input type="submit" name="test" value="voir">
-  </p>
+  <!-- Entrée valeur TOP   + Titre page -->
+  <div class="container">
+    <div class="row mb-3">
+      <div class="col-md-8"><h5>Graphiques : Ventes par pays</h5></div>
+      <div class="col-md-4" style="text-align: right;">
+        <!-- Froms suite (entrée top) -->
+        <p>
+          <label for="id_param1">Top  :</label>
+          <input type="number" name="param1" id="id_param1">
+    
+          <!-- Bouton -->
+          <input type="submit" name="test" value="voir">
+        </p>
+        <!-- Fin forms suite -->
+      </div>
+    </div>
+  </div>
 </form>
 
 <!-- Graphique ----------------------------------------------------------------------------------------------------->
-<div id="container" style="width: 80%;">
+<div class="container">
   <div class="row">
 
     <!-- Camembert -->
-    <div class="col-md-5">
+    <div class="col-md-4">
       <canvas id="pie-chart"></canvas>
     </div>
 
     <!-- Histogramme -->
-    <div class="col-md-6">
+    <div class="col-md-8">
       <canvas id="bar-chart"></canvas>
     </div>
 
@@ -66,7 +72,7 @@
 
 <!-- The Modal -->
 <div class="modal" id="myModal{{ elt|cut:' ' }}">
-    <div class="modal-dialog modal-xl">
+    <div class="modal-dialog modal-lg">
         <div class="modal-content">
 
             <!-- Modal Header -->
@@ -77,16 +83,16 @@
 
             <!-- Modal body -->
             <div class="modal-body">
-                <div id="container{{ elt }}">
+                <div class="container">
                     <div class="row">
 
                         <!-- Camembert -->
-                        <div class="col-md-6">
+                        <div class="col-md-4">
                             <canvas id="pie-chartModal{{ elt }}"></canvas>
                         </div>
 
                         <!-- Histogramme -->
-                        <div class="col-md-6">
+                        <div class="col-md-8">
                             <canvas id="bar-chartModal{{ elt }}"></canvas>
                         </div>
 
@@ -95,9 +101,9 @@
             </div>
 
             <!-- Modal footer -->
-            <div class="modal-footer">
+            <!-- <div class="modal-footer">
                 <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-            </div>
+            </div> -->
 
         </div>
     </div>
@@ -105,8 +111,8 @@
 {% endfor %}
 
 <!-- Bouton retour -->
-<br>
-<a href="/dashboard">Retour</a> <!--Attention au déploiement, à changer-->
+<!-- <br>
+<a href="/dashboard">Retour</a> -->
 
 <!-- Chart JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>

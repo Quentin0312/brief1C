@@ -3,104 +3,113 @@
 {% block contenu %}
 {% load static %}
 <p hidden id="quelPage">graph3</p>
-<h1>Graph 3 v2</h1>
-
-<!-- From1 -->
-<form action method ="POST" id="form1">
-    {% csrf_token %}
-    <!-- {{form.as_p}} -->
-
-    <!-- Entrée valeur nomgraph (automatique) -->
-    <p>
-        <label hidden for="id_nomgraph">Nomgraph:</label>
-        <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph_1" value="graph3ProduitsPays">
-    </p>
-
-    <!-- Entrée valeur TOP  -->
-    <p>
-        <label for="id_param1">Top  :</label>
-        <input type="number" name="param1" id="id_param1_1">
-
-    <!-- Entrée valeur Pays -->
-        <label for="id_param2">Pays:</label>
-        <input list="listePays" name="param2" maxlength="50" id="id_param2_1">
-        <datalist id="listePays">
-            {% for elt in listePays %}
-            <option value="{{ elt }}" class="pays">
-            {% endfor %}
-        </datalist>
-        <input type="submit" name="test" value="voir" id="form1submit">
-    </p>
-</form>
+<h5 style="text-align: center;">Graph 3 v2</h5>
 
 <!-- Graphiques 1 -->
-<div class="container">
-    <div class="row justify-content-center">
-        <h3 class="col-6"> Top {{ top1 }} produits pour {{ pays1 }}</h3> <!--Titre-->
-        <h3 class="col-6"> Top {{ top2 }} pays pour {{ produits2 }}</h3> <!--Titre-->
+<div class="container-fluid">
 
-    <div class="row justify-content-center">
-        <div class="col-3">
-            <!-- Camembert -->
+    <!-- Titres -->
+    <div class="row">
+        <h4 style="text-align: center;" class="col-6"> Top {{ top1 }} produits pour {{ pays1 }}</h4>
+        <h4 style="text-align: center;" class="col-6"> Top {{ top2 }} pays pour {{ produits2 }}</h4>
+    </div>
+
+    <!-- Graphs -->
+    <div class="row">
+
+        <!-- Camembert 1 -->
+        <div class="col-2">
             <canvas id="pie-chart"></canvas>
         </div>
-        <div class="col-3">
-            <!-- Camembert -->
-            <canvas id="pie-chart2"></canvas>
-        </div>
-        <div class="w-100 d-none d-md-block"></div>
+
+        <!-- Histogramme 1 -->
         <div class="col-4">
-            <!-- Histogramme -->
             <canvas id="bar-chart"></canvas>
         </div>
+
+        <!-- Camembert 2 -->
+        <div class="col-2">
+            <canvas id="pie-chart2"></canvas>
+        </div>
+
+        <!-- Histogramme 2 -->
         <div class="col-4">
-            <!-- Histogramme -->
             <canvas id="bar-chart2"></canvas>
+        </div>
+
+    </div>
+
+    <!-- Forms -->
+    <div class="row">
+
+        <!-- From1 -->
+        <div class="col-6">
+            <form action method ="POST" id="form1">
+                {% csrf_token %}
+                <!-- {{form.as_p}} -->
+
+                <!-- Entrée valeur nomgraph (automatique) -->
+                <p>
+                    <label hidden for="id_nomgraph">Nomgraph:</label>
+                    <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph_1" value="graph3ProduitsPays">
+                </p>
+
+                <!-- Entrée valeur TOP  -->
+                <div class="d-flex justify-content-center">
+                    <p>
+                        <label for="id_param1">Top  :</label>
+                        <input type="number" name="param1" id="id_param1_1">
+
+                    <!-- Entrée valeur Pays -->
+                        <label for="id_param2">Pays:</label>
+                        <input list="listePays" name="param2" maxlength="50" id="id_param2_1">
+                        <datalist id="listePays">
+                            {% for elt in listePays %}
+                            <option value="{{ elt }}" class="pays">
+                            {% endfor %}
+                        </datalist>
+                        <input type="submit" name="test" value="voir" id="form1submit">
+                    </p>
+                </div>
+            </form>
+        </div>
+        
+        <!-- From2 -->
+        <div class="col-6">
+            <form action method ="POST" id="form2">
+                {% csrf_token %}
+                <!-- {{form.as_p}} -->
+
+                <!-- Entrée valeur nomgraph (automatique) -->
+                <p>
+                    <label hidden for="id_nomgraph">Nomgraph:</label>
+                    <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph_2" value="graph3PaysProduits">
+                </p>
+
+                <!-- Entrée valeur TOP  -->
+                <div class="d-flex justify-content-center">
+                    <p>
+                        <label for="id_param1">Top  :</label>
+                        <input type="number" name="param1" id="id_param1_2">
+
+                    <!-- Entrée valeur Produit -->
+                        <label for="id_param2">Produits:</label>
+                        <input list="listeProduits" name="param2" maxlength="50" id="id_param2_2">
+                        <datalist id="listeProduits">
+                            {% for elt in listeProduits %}
+                            <option value="{{ elt }}" class="produits">
+                            {% endfor %}
+                        </datalist>
+                        <input type="submit" name="test" value="voir">
+                    </p>
+                </div>
+            </form>
         </div>
     </div>
 
 </div>
-<!-- From2 -->
-<form action method ="POST" id="form2">
-    {% csrf_token %}
-    <!-- {{form.as_p}} -->
 
-    <!-- Entrée valeur nomgraph (automatique) -->
-    <p>
-        <label hidden for="id_nomgraph">Nomgraph:</label>
-        <input hidden type="text" name="nomgraph" maxlength="50" required="" id="id_nomgraph_2" value="graph3PaysProduits">
-    </p>
 
-    <!-- Entrée valeur TOP  -->
-    <p>
-        <label for="id_param1">Top  :</label>
-        <input type="number" name="param1" id="id_param1_2">
-
-    <!-- Entrée valeur Produit -->
-        <label for="id_param2">Produits:</label>
-        <input list="listeProduits" name="param2" maxlength="50" id="id_param2_2">
-        <datalist id="listeProduits">
-            {% for elt in listeProduits %}
-            <option value="{{ elt }}" class="produits">
-            {% endfor %}
-        </datalist>
-        <input type="submit" name="test" value="voir">
-    </p>
-</form>
-
-<div class="row">
-    <div class="col-6 ">.col-6 .col-sm-4</div>
-    <div class="col-6">.col-6 .col-sm-4</div>
-  
-    <!-- Force next columns to break to new line at md breakpoint and up -->
-    <div class="w-100 d-none d-md-block"></div>
-  
-    <div class="col-6">.col-6 .col-sm-4</div>
-    <div class="col-6">.col-6 .col-sm-4</div>
-  </div>
-<!-- Bouton retour -->
-<br>
-<a href="http://127.0.0.1:8000/dashboard/">Retour</a> <!--Attention au déploiement, à changer-->
 
 <!-- Chart JS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
@@ -118,4 +127,7 @@
 <script src="{% static 'graphsFunctions.js' %}"></script>
 <script src="{% static 'graph3.js' %}"></script>
 
+
+<!-- Force next columns to break to new line at md breakpoint and up -->
+<!-- <div class="w-100 d-none d-md-block"></div> -->
 {% endblock %}

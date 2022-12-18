@@ -1,52 +1,58 @@
 {% extends 'base.html' %}
 
 {% block contenu %}
-<br>
-<a href="add" class="btn btn-primary btn-lg active" >Importer</a>
-<br>
 
-<a href="graphPays">Voir graphiques des ventes par pays</a>
+<h5>Visualiser</h5> <!--À centrer-->
 
 
+<div class="container">
+  <div class="row">
+    <!-- Carte ventes par pays -->
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Ventes par pays</h5>
+          <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
+          <a href="graphPays" class="btn btn-primary">Voir</a>
+        </div>
+      </div>
+    </div>
+    <!-- Carte ventes par produits -->
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Ventes pas produits</h5>
+          <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
+          <a href="graphProduits" class="btn btn-primary">Voir</a>
+        </div>
+      </div>
+    </div>
+    <!-- Carte ventes par pays/produits -->
+    <div class="col-sm-4">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Ventes par produits et pays</h5>
+          <!-- <p class="card-text">With supporting text below as a natural lead-in to additional content.</p> -->
+          <a href="graph3" class="btn btn-primary">Voir</a>
+        </div>
+      </div>
+    </div>
 
-<br>
-<a href="graphProduits">Voir graphiques des ventes par produits</a>
-<br>
-<a href="graphTCD">Voir graphique des ventes par produits et pays</a>
-<br>
-<a href="graph3">Graph 3 v2</a>
+  </div>
+</div>
+
+<!-- Test/Debug -->
+<!-- <a href="graphTCD">Voir graphique des ventes par produits et pays</a>
 <br>
 <a href="testActuel">Test actuel</a>
 <br>
-<a href="testValidationImport">testValidationImport</a>
-<!-- Button to Open the Modal -->
-<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#myModal">
-    Open modal
-  </button>
-  
-  <!-- The Modal -->
-  <div class="modal" id="myModal">
-    <div class="modal-dialog">
-      <div class="modal-content">
-  
-        <!-- Modal Header -->
-        <div class="modal-header">
-          <h4 class="modal-title">Modal Heading</h4>
-          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-        </div>
-  
-        <!-- Modal body -->
-        <div class="modal-body">
-          Modal body..
-        </div>
-  
-        <!-- Modal footer -->
-        <div class="modal-footer">
-          <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
-        </div>
-  
-      </div>
-    </div>
-  </div>
+<a href="testValidationImport">testValidationImport</a> -->
+
+<!-- Liens actifs -->
+<!-- <a href="graphPays">Voir graphiques des ventes par pays</a>
+<br>
+<a href="graphProduits">Voir graphiques des ventes par produits</a>
+<br>
+<a href="graph3">Graph 3 v2</a> -->
 
 {% endblock %} 

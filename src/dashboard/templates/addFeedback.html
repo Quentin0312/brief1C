@@ -2,14 +2,76 @@
 
 {% block contenu %}
 <!-- Liste feedback -->
-<h3>Ventes supprimées</h3>
+<!-- <h3>Ventes supprimées</h3>
 <p>Nombre de ventes avant suppression: <strong>{{ feedback.avantNettoyage }}</strong></p>
 <p>Après suppression des doublons (<strong>{{ feedback.qteSupprDoublons }}</strong>): <strong>{{ feedback.apresSupprDoublons }}</strong></p>
 <p>Après suppression des pays "Unspecified" (<strong>{{ feedback.qteSupprPays }}</strong>): <strong>{{ feedback.apresSupprPays }}</strong> </p>
 <p>Après suppression des avoirs (<strong>{{ feedback.qteSupprAvoir }}</strong>): <strong>{{ feedback.apresSupprAvoir }}</strong> </p>
 <p>Nombre de ventes après suppression: <strong>{{ feedback.apresNettoyage }}</strong></p>
-<p>Ventes supprimés: <strong>{{ feedback.lignesSuppr }}</strong> (<strong>{{ feedback.pourcentageDataPerdues }}</strong> %)</p>
+<p>Ventes supprimés: <strong>{{ feedback.lignesSuppr }}</strong> (<strong>{{ feedback.pourcentageDataPerdues }}</strong> %)</p> -->
 
 
-<a href="addDF"> Importer</a>
+
+
+  <div class="container">
+    <div class="row">
+        <div class="d-flex justify-content-center">
+            <div class="col-7">
+                
+                <div class="card">
+
+                    <div class="card-header">
+                        Feedback nettoyage du csv
+                    </div>
+                
+                    <div class="card-body">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">Étape</th>
+                                    <th scope="col">Ventes supprimées</th>
+                                    <th scope="col">Ventes restantes</th>
+                                </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                                <tr>
+                                    <td colspan="2" >Avant suppression</td>
+                                    <td>{{ feedback.avantNettoyage }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Suppression des doublons</td>
+                                    <td>{{ feedback.qteSupprDoublons }}</td>
+                                    <td>{{ feedback.apresSupprDoublons }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Suppression du pays "Unspecified"</td>
+                                    <td>{{ feedback.qteSupprPays }}</td>
+                                    <td>{{ feedback.apresSupprPays }}</td>
+                                </tr>
+                                <tr>
+                                    <td>Suppression des avoirs</td>
+                                    <td>{{ feedback.qteSupprAvoir }}</td>
+                                    <td>{{ feedback.apresSupprAvoir }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Fin</th>
+                                    <th>Total: {{ feedback.lignesSuppr }} soit {{ feedback.pourcentageDataPerdues|floatformat:2 }} %</th>
+                                    <th>{{ feedback.apresNettoyage }}</th>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <a class="btn btn-secondary" href="addDF"> Importer</a>
+                        <a class="btn btn-warning" href="add"> Sélectionner un autre fichier</a>
+                        <a class="btn btn-danger" href="/dashboard"> Abandonner</a>
+                    </div>
+                
+                </div>
+                
+            </div>
+        </div>
+
+    </div>
+
+</div>
 {% endblock %} 

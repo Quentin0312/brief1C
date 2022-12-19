@@ -1,5 +1,31 @@
 // Création des data pour chart JS
-var dataFinal = produireDataFinal(labels, data0);
+var dataFinal = produireDataFinal(labels, data0,0);
+
+// Liste couleurs des graphs
+var listeCouleurs = [
+    '#2bc0a3',
+    '#2b93c0',
+    '#2b48c0',
+    '#582bc0',
+    '#a32bc0',
+    '#c02b93',
+    '#c02b2b',
+    '#c0762b',
+    '#c0c02b',
+    '#76c02b',
+    '#2bc02b',
+    '#2bc076'
+]
+var couleursTest = [
+    '#36A2EB',
+    '#FF6384',
+    '#4BC0C0',
+    '#FF9F40',
+    '#9966FF',
+    '#FFCD56',
+    '#C9CBCF'
+
+]
 
 // Graph histogramme
 const configBar = {
@@ -24,9 +50,8 @@ const configPie = {
     data: {
         datasets: [{
         data: data0,
-        backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-        ],
+        backgroundColor: listeCouleurs,
+        borderWidth: 1,
         label: 'Population'
         }],
         labels: labels

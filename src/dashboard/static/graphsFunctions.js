@@ -12,7 +12,7 @@ if (document.getElementById("quelPage").innerText == "graphPays" || document.get
 
     // Rempli datasets avec les valeurs selon la page affiché (donc elt dans labels)
     for (elt in labels){
-        dicoDataFinalModal[labels[elt]] = produireDataFinal(dicoLabelsModal[labels[elt]], dicoDataModal[labels[elt]]);
+        dicoDataFinalModal[labels[elt]] = produireDataFinal(dicoLabelsModal[labels[elt]], dicoDataModal[labels[elt]], 0);
     }
     
     // Concerne les graphs modal, il faut attendre que le HTML produit tout les modal contenant les canvas 
@@ -45,8 +45,20 @@ if (document.getElementById("quelPage").innerText == "graphPays" || document.get
                     datasets: [{
                         data: dicoDataModal[labels[elt]],
                         backgroundColor: [
-                            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
+                            '#2bc0a3',
+                            '#2b93c0',
+                            '#2b48c0',
+                            '#582bc0',
+                            '#a32bc0',
+                            '#c02b93',
+                            '#c02b2b',
+                            '#c0762b',
+                            '#c0c02b',
+                            '#76c02b',
+                            '#2bc02b',
+                            '#2bc076'
                         ],
+                        borderWidth: 1,
                         label: 'Population'
                     }],
                     labels: dicoLabelsModal[labels[elt]]
@@ -96,22 +108,114 @@ function creerDicoData(labels, data){
 }
 
 // Créer la data final pour la configuration du chart (dans la config=> {data: "creerConfigDataFinal(dicoData, labels)"})
-function creerConfigDataFinal(dicoData, labels){
+function creerConfigDataFinal(dicoData, labels, couleurs){
 
     // Liste contenant les dictionnaire data contenant {label:..., data:..., backgroundColor:..., stack:...}
     var listDataFinal = []
 
-    // Permet de faire correspondre le bon labels et dicoData
-    var i2 = -1
-    // Permet de créer toute les series de datas
-    for (elt in dicoData){
-        i2 += 1
-        listDataFinal.push({
-            label: labels[i2],
-            data : dicoData[labels[i2]],
-            backgroundColor: "#"+Math.floor(Math.random()*16777215).toString(16),
-            stack: 'Stack 0'
-        })
+    // Liste couleurs des graphs
+    var listeCouleurs0 = [
+        '#2bc0a3',
+        '#2b93c0',
+        '#2b48c0',
+        '#582bc0',
+        '#a32bc0',
+        '#c02b93',
+        '#c02b2b',
+        '#c0762b',
+        '#c0c02b',
+        '#76c02b',
+        '#2bc02b',
+        '#2bc076'
+    ]
+    var listeCouleurs1 = [
+        '#2bc0a3',
+        '#2b93c0',
+        '#2b48c0',
+        '#582bc0',
+        '#a32bc0',
+        '#c02b93'
+    ]
+    var listeCouleurs2 = [
+        '#c02b2b',
+        '#c0762b',
+        '#c0c02b',
+        '#76c02b',
+        '#2bc02b',
+        '#2bc076'
+    ]
+    // Si correspond à graphPays ou graphProduits 
+    if (couleurs == 0){
+        var listeCouleurs = listeCouleurs0;
+    
+        // Permet de boucler sur les couleurs
+        var iCouleurs = -1
+        
+        // Permet de faire correspondre le bon labels et dicoData
+        var i2 = -1
+        // Permet de créer toute les series de datas
+        for (elt in dicoData){
+            i2 += 1
+            // Permet de recommencer la boucle des couleurs
+            if (iCouleurs == 11){
+                iCouleurs = -1
+            }
+            iCouleurs += 1
+            listDataFinal.push({
+                label: labels[i2],
+                data : dicoData[labels[i2]],
+                backgroundColor: listeCouleurs[iCouleurs],
+                stack: 'Stack 0'
+            })
+        }
+    }
+    else if (couleurs == 1){
+        var listeCouleurs = listeCouleurs1;
+    
+        // Permet de boucler sur les couleurs
+        var iCouleurs = -1
+        
+        // Permet de faire correspondre le bon labels et dicoData
+        var i2 = -1
+        // Permet de créer toute les series de datas
+        for (elt in dicoData){
+            i2 += 1
+            // Permet de recommencer la boucle des couleurs
+            if (iCouleurs == 5){
+                iCouleurs = -1
+            }
+            iCouleurs += 1
+            listDataFinal.push({
+                label: labels[i2],
+                data : dicoData[labels[i2]],
+                backgroundColor: listeCouleurs[iCouleurs],
+                stack: 'Stack 0'
+            })
+        }
+    }
+    else if (couleurs == 2){
+        var listeCouleurs = listeCouleurs2;
+    
+        // Permet de boucler sur les couleurs
+        var iCouleurs = -1
+        
+        // Permet de faire correspondre le bon labels et dicoData
+        var i2 = -1
+        // Permet de créer toute les series de datas
+        for (elt in dicoData){
+            i2 += 1
+            // Permet de recommencer la boucle des couleurs
+            if (iCouleurs == 5){
+                iCouleurs = -1
+            }
+            iCouleurs += 1
+            listDataFinal.push({
+                label: labels[i2],
+                data : dicoData[labels[i2]],
+                backgroundColor: listeCouleurs[iCouleurs],
+                stack: 'Stack 0'
+            })
+        }
     }
     return listDataFinal
 }
@@ -242,13 +346,13 @@ function actionClick(click, chart, labels){
 }
 
 // Permet de produire la data final utilisable avec chart JS (dico car dynamique)
-function produireDataFinal(labels, data){
+function produireDataFinal(labels, data, couleurs){
 
     // Créer le dicoData pour histogramme bar stacked
     dicoData = creerDicoData(labels, data)
 
     // Créer la liste de data (presque) final pour histogramme bar stacked
-    var configDataFinal = creerConfigDataFinal(dicoData, labels)
+    var configDataFinal = creerConfigDataFinal(dicoData, labels,couleurs)
 
     // Data final à utiliser pour chart JS (histogramme bar stacked)
     const dataFinal = {

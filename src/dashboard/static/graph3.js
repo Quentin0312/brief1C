@@ -1,7 +1,26 @@
 // Création des data pour chart JS
 
-var dataFinal1 = produireDataFinal(labels1, data1);
-var dataFinal2 = produireDataFinal(labels2, data2);
+var dataFinal1 = produireDataFinal(labels1, data1, 1);
+var dataFinal2 = produireDataFinal(labels2, data2, 2);
+
+// Liste couleurs des graphs
+var listeCouleurs1 = [
+    '#2bc0a3',
+    '#2b93c0',
+    '#2b48c0',
+    '#582bc0',
+    '#a32bc0',
+    '#c02b93'
+]
+
+var listeCouleurs2 = [
+    '#c02b2b',
+    '#c0762b',
+    '#c0c02b',
+    '#76c02b',
+    '#2bc02b',
+    '#2bc076'
+]
 
 // Graph histogramme 1
 const configBar1 = {
@@ -26,9 +45,8 @@ const configPie1 = {
     data: {
         datasets: [{
             data: data1,
-            backgroundColor: [
-                '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-            ],
+            backgroundColor: listeCouleurs1,
+            borderWidth: 1,
             label: 'Population'
         }],
         labels: labels1
@@ -61,9 +79,8 @@ const configPie2 = {
     data: {
         datasets: [{
         data: data2,
-        backgroundColor: [
-            '#696969', '#808080', '#A9A9A9', '#C0C0C0', '#D3D3D3'
-        ],
+        backgroundColor: listeCouleurs2,
+        borderWidth: 1,
         label: 'Population'
         }],
         labels: labels2

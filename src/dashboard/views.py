@@ -186,7 +186,11 @@ def nettoyageDataframe(dataframe):
     dataframe.drop('UnitPrice', inplace=True, axis=1)
 
     # Rennomer les colonne
-    dataframe = dataframe.rename(columns={'InvoiceNo': 'nofacture', 'StockCode': 'codeproduit', 'InvoiceDate' : 'datefacturation', 'Country' : 'region', 'Description' : 'description'})
+    dataframe = dataframe.rename(columns={'InvoiceNo': 'nofacture',
+                                        'StockCode': 'codeproduit',
+                                        'InvoiceDate' : 'datefacturation',
+                                        'Country' : 'region',
+                                        'Description' : 'description'})
     
     # To date
     dataframe["datefacturation"] = pd.to_datetime(dataframe["datefacturation"])
@@ -228,7 +232,8 @@ def importerProduits(df, engine):
 
         #Création des dataframes à concaténer
         dataframeSQL = pd.DataFrame(querySQL, columns=['codeproduit','description'])
-        dataframeSQLcopie = dataframeSQL.copy() # dataframeSQL en double pour ne garder seulement que les nouvelles data via drop_duplicates par la suite
+        dataframeSQLcopie = dataframeSQL.copy() # dataframeSQL en double pour ne garder seulement 
+        # que les nouvelles data via drop_duplicates par la suite
         dataframeProduit = produitDF[['codeproduit','description']]
         
         # Concatenation

@@ -12,3 +12,4 @@ six==1.16.0
 SQLAlchemy==1.4.44
 sqlparse==0.4.3
 tzdata==2022.6
+whitenoise

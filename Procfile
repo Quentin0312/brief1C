@@ -1,0 +1,1 @@
+web: gunicorn testDjangoHeroku.wsgi:application --timeout 300
